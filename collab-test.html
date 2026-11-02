@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live session test</title>
+    <style>
+      body { font-family: Georgia, serif; max-width: 760px; margin: 24px auto; padding: 0 16px; }
+      #editor .ProseMirror { min-height: 240px; border: 1px solid #ccc; border-radius: 6px; padding: 12px 16px; outline: none; line-height: 1.6; }
+      .collaboration-carets__caret { position: relative; margin-left: -1px; margin-right: -1px; border-left: 1px solid #0d0d0d; border-right: 1px solid #0d0d0d; word-break: normal; pointer-events: none; }
+      .collaboration-carets__label { position: absolute; top: -1.4em; left: -1px; font-size: 12px; font-weight: 600; line-height: normal; padding: 0.1rem 0.3rem; border-radius: 3px 3px 3px 0; color: #fff; white-space: nowrap; user-select: none; }
+      mark.asterism-comment-highlight { background: #ffe9a8; }
+      #who { color: #666; font-size: 14px; }
+      input { font: inherit; padding: 4px 6px; }
+      code { background: #f2eee4; padding: 2px 6px; border-radius: 4px; font-size: 1.05em; }
+    </style>
+  </head>
+  <body>
+    <p id="who"></p>
+    <p id="status" style="color:#2a7;font-size:14px"></p>
+    <div id="start">
+      <p><label>Your name <input id="name" value="Writer" /></label></p>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <fieldset>
+          <legend>Host</legend>
+          <p><label>Relay address <input id="relay" value="ws://localhost:8788" size="30" /></label></p>
+          <p><label>Host key <input id="hostKey" size="34" value="asterism-test-key-0001" placeholder="printed when the relay starts" /></label></p>
+          <button id="host">Host a session</button>
+        </fieldset>
+        <fieldset>
+          <legend>Join</legend>
+          <p><label>Host's address <input id="address" size="34" placeholder="e.g. 192.168.1.20:8788" /></label></p>
+          <p><label>Password <input id="password" size="34" placeholder="e.g. amber-otter-brick-lane" /></label></p>
+          <button id="join">Join</button>
+        </fieldset>
+      </div>
+    </div>
+    <div id="hostTools" hidden>
+      <button id="inviteWriter">Invite a writer</button> <button id="inviteReader">Invite a reader</button>
+      <p id="inviteText"></p>
+    </div>
+    <div id="editor"></div>
+    <script type="module" src="/src/editor/collabTest.ts"></script>
+  </body>
+</html>

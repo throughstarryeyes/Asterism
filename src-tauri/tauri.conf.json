@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Asterism",
+  "version": "0.1.0",
+  "identifier": "app.asterism.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Asterism",
+        "width": 1280,
+        "height": 820,
+        "resizable": true,
+        "fullscreen": false,
+        "minWidth": 900,
+        "minHeight": 600,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "publisher": "Asterism Writing",
+    "copyright": "Copyright 2026 Asterism Writing. Free software under the GNU GPL version 3 or later.",
+    "licenseFile": "../LICENSE",
+    "resources": {
+      "../NOTICES.md": "NOTICES.md"
+    },
+    "shortDescription": "A writing app for stories",
+    "longDescription": "Asterism is an offline-first writing environment and story toolkit."
+  }
+}

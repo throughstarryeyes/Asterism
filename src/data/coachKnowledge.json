@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "feelings": {
+    "fear": {
+      "label": "Fear",
+      "phrase": "afraid",
+      "warmth": -0.5,
+      "packet": "Fears & Avoidance",
+      "cues": {
+        "explicit": ["afraid", "terrif", "scared", "frighten", "dread", "panic", "fear"],
+        "physical": ["tremb", "shak", "flinch", "heart pound", "heart raced", "couldn't breathe", "cold sweat", "goosebumps"],
+        "avoidance": ["stepped back", "backed away", "backed off", "refused to go", "wouldn't go near", "wouldn't look", "avoided", "steered clear", "turned away from"],
+        "deflection": []
+      }
+    },
+    "confusion": {
+      "label": "Confusion",
+      "phrase": "confused",
+      "warmth": 0,
+      "packet": "Agency & Choice",
+      "cues": {
+        "explicit": ["confus", "bewilder", "puzzl", "baffl", "perplex", "didn't understand", "couldn't make sense", "made no sense"],
+        "physical": ["frowned", "furrowed", "blinked", "head tilted", "stared blankly"],
+        "avoidance": [],
+        "deflection": []
+      }
+    },
+    "love": {
+      "label": "Love",
+      "phrase": "in love",
+      "warmth": 1,
+      "packet": "Attachment & Love",
+      "cues": {
+        "explicit": ["loved", "adore", "cherish", "in love", "devoted"],
+        "physical": ["blush", "heart ached", "couldn't stop looking", "lingered", "reached for his hand", "reached for her hand", "smiled at"],
+        "avoidance": [],
+        "deflection": []
+      }
+    },
+    "anger": {
+      "label": "Anger",
+      "phrase": "angry",
+      "warmth": -1,
+      "packet": "Wounds & Lies",
+      "cues": {
+        "explicit": ["furious", "angry", "enraged", "rage", "livid", "seething", "resent"],
+        "physical": ["clenched", "slammed", "snapped", "glared", "jaw tight", "jaw tightened"],
+        "avoidance": [],
+        "deflection": []
+      }
+    },
+    "grief": {
+      "label": "Grief",
+      "phrase": "grieving",
+      "warmth": -0.25,
+      "packet": "Healing & Becoming",
+      "cues": {
+        "explicit": ["grie", "mourn", "heartbroken", "devastat", "bereft"],
+        "physical": ["wept", "sobbed", "tears", "hollow", "missed him", "missed her", "missed them"],
+        "avoidance": [],
+        "deflection": []
+      }
+    },
+    "evasion": {
+      "label": "Avoidance",
+      "phrase": "avoiding something",
+      "warmth": -0.5,
+      "packet": "Masks & Performances",
+      "cues": {
+        "explicit": [],
+        "physical": [],
+        "avoidance": [],
+        "deflection": ["changed the subject", "i'm fine", "never mind", "it's nothing", "forget it", "drop it", "shrugged it off", "looked away", "didn't answer", "didn't want to talk"]
+      }
+    }
+  },
+  "events": [
+    "funeral", "wedding", "betrayal", "accident", "fire", "fight", "argument", "kiss", "confession", "trial", "war", "battle",
+    "escape", "murder", "explosion", "burial", "divorce", "breakup", "shipwreck", "arrest", "duel", "coronation", "attack", "reunion"
+  ],
+  "toldNotShown": [
+    "had", "since", "after", "before", "remember", "remembered", "heard", "told", "ever since", "the night of", "the day of", "years ago"
+  ],
+  "board": {
+    "promise": ["i promise", "i swear", "you have my word", "i give you my word", "cross my heart", "i'll come back", "i'll find you", "i'll be there", "i'll never", "i'll always"],
+    "secret": ["secret", "don't tell", "no one can know", "no one must know", "keep this between us", "keep it between us", "never told anyone"],
+    "warning": ["whatever you do", "don't go", "stay away", "be careful", "do not trust", "never trust", "beware"]
+  },
+  "promptThemes": {
+    "Secrets & lies": ["secret", "hid", "conceal", "confess", "lie", "lying", "truth", "pretend", "unsaid", "unspoken", "never told", "admit"],
+    "Love & closeness": ["love", "kiss", "touch", "hold", "tender", "affection", "miss", "together", "partner", "lover", "safe", "intimat", "close to"],
+    "Grief & loss": ["grie", "lost", "loss", "dead", "death", "died", "funeral", "mourn", "goodbye", "gone", "absence", "empty", "left behind"],
+    "Fear & danger": ["afraid", "fear", "scare", "danger", "escape", "hunt", "threat", "panic", "dark", "trap", "chase", "hurt", "survive", "terrif"],
+    "Family": ["mother", "father", "mom", "dad", "sister", "brother", "parent", "child", "kid", "family", "sibling", "daughter", "grand", "relative"],
+    "Home & place": ["home", "house", "room", "city", "town", "street", "door", "window", "kitchen", "road", "bridge", "shore", "forest", "station", "return", "place"],
+    "Memory & the past": ["remember", "memor", "past", "years ago", "childhood", "used to", "once", "before", "again", "old ", "forgot", "forgiv"],
+    "Conversation": ["conversation", "say", "said", "speak", "talk", "ask", "answer", "word", "silence", "message", "letter", "call", "whisper", "argu"],
+    "Choices & change": ["decid", "decision", "choice", "choos", "change", "turning", "finally", "last ", "first time", "begin", "start", "refus", "sacrific"]
+  }
+}

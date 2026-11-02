@@ -1,0 +1,133 @@
+{
+  "pairs": [
+    {
+      "a_wants": "truth",
+      "b_wants": "safety",
+      "but": "the truth would destroy the only safe thing they have."
+    },
+    {
+      "a_wants": "control",
+      "b_wants": "freedom",
+      "but": "every compromise feels like betrayal to someone."
+    },
+    {
+      "a_wants": "to be chosen",
+      "b_wants": "to never owe anyone",
+      "but": "need starts to look like a trap."
+    },
+    {
+      "a_wants": "peace",
+      "b_wants": "justice",
+      "but": "the cost is paid by the wrong person."
+    },
+    {
+      "a_wants": "to be forgiven",
+      "b_wants": "to be proven right",
+      "but": "apologies without repair make it worse."
+    },
+
+    {
+      "a_wants": "stability",
+      "b_wants": "honesty",
+      "but": "honesty would unravel everything holding them together."
+    },
+    {
+      "a_wants": "to protect someone",
+      "b_wants": "to be honest with them",
+      "but": "protection requires a lie that keeps growing."
+    },
+    {
+      "a_wants": "to survive",
+      "b_wants": "to stay good",
+      "but": "goodness keeps getting in the way."
+    },
+    {
+      "a_wants": "to leave",
+      "b_wants": "to not be the villain",
+      "but": "leaving means abandoning someone who can’t follow."
+    },
+    {
+      "a_wants": "to be believed",
+      "b_wants": "to tell the whole story",
+      "but": "the parts that matter most make them sound guilty."
+    },
+
+    {
+      "a_wants": "power",
+      "b_wants": "clean hands",
+      "but": "power only comes with residue."
+    },
+    {
+      "a_wants": "to stop the harm",
+      "b_wants": "to avoid becoming the cause",
+      "but": "intervention guarantees blame."
+    },
+    {
+      "a_wants": "to keep what they have",
+      "b_wants": "to not hurt anyone",
+      "but": "keeping it requires enforcement."
+    },
+    {
+      "a_wants": "to be honest about what they did",
+      "b_wants": "to keep the outcome",
+      "but": "confession would undo everything."
+    },
+    {
+      "a_wants": "to be safe",
+      "b_wants": "to feel alive",
+      "but": "risk is the only thing that cuts through the numbness."
+    },
+
+    {
+      "a_wants": "to be understood",
+      "b_wants": "to be left alone",
+      "but": "explaining invites interference."
+    },
+    {
+      "a_wants": "to make it stop",
+      "b_wants": "to not escalate",
+      "but": "doing nothing is what makes it worse."
+    },
+    {
+      "a_wants": "to hold the line",
+      "b_wants": "to be merciful",
+      "but": "mercy teaches people where the line bends."
+    },
+    {
+      "a_wants": "to fix the damage",
+      "b_wants": "to avoid consequences",
+      "but": "repair requires visibility."
+    },
+    {
+      "a_wants": "to be free of guilt",
+      "b_wants": "to keep going",
+      "but": "guilt is the only thing slowing them down."
+    },
+
+    {
+      "a_wants": "to walk away clean",
+      "b_wants": "to make sure it never happens again",
+      "but": "prevention means getting involved."
+    },
+    {
+      "a_wants": "to be the good one",
+      "b_wants": "to win",
+      "but": "winning means using the same tools."
+    },
+    {
+      "a_wants": "to be done",
+      "b_wants": "to be right",
+      "but": "being right keeps reopening the conflict."
+    },
+    {
+      "a_wants": "to protect their future",
+      "b_wants": "to acknowledge the past",
+      "but": "the past has leverage."
+    },
+    {
+      "a_wants": "to survive this once",
+      "b_wants": "to never have to do it again",
+      "but": "survival teaches repetition."
+    }
+  ]
+}

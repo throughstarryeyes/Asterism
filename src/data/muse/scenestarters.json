@@ -1,0 +1,34 @@
+{
+    "meta": {
+      "version": 1,
+      "default_goal": "random",
+      "fallback_goal": "filler"
+    },
+    "goals": {
+      "bonding": [
+        "They have to do a small task together that requires quiet coordination.",
+        "One of them shows up with something mundane they remembered the other likes.",
+        "They share a space neither of them chose, and it feels unexpectedly safe."
+      ],
+      "confession": [
+        "They start to say the truth, then pivot, then try again.",
+        "A confession arrives sideways, wrapped in a story that is not quite a story.",
+        "They admit something small that implies something much bigger."
+      ],
+      "grief": [
+        "Grief shows up as irritation first, then silence.",
+        "They try to fix something trivial because the real loss can’t be fixed.",
+        "A memory interrupts the present at the worst possible moment."
+      ],
+      "suspense": [
+        "A message arrives too late to stop what’s already in motion.",
+        "Someone realizes they’re being watched, but can’t prove it.",
+        "The room goes quiet for no clear reason, and it stays quiet."
+      ],
+      "filler": [
+        "They run an errand that becomes more intimate than expected.",
+        "A small delay forces them to sit together without distraction.",
+        "They do something routine while avoiding what they actually want to say."
+      ]
+    }
+  }  

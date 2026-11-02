@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# secrets and local settings
+.env
+.env.*
+!.env.example
+
+# desktop build output
+src-tauri/target
+src-tauri/target-new
+src-tauri/gen/schemas
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# loose exports and screenshots
+*.soundscape.json
+*.inkwellsound.json
+*.inkwell.json
+Screenshot*.png

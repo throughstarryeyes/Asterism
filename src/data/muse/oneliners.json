@@ -1,0 +1,21 @@
+{
+    "meta": { "version": 1, "default_tag": "any" },
+    "tags": {
+      "dialogue": [
+        "“Don’t make that face. You promised.”",
+        "“Say it again, but mean it this time.”",
+        "“If you leave now, I won’t stop you.”"
+      ],
+      "description": [
+        "The room smelled like rain and unfinished sentences.",
+        "A single light stayed on in the window like a dare.",
+        "The silence was the kind that had teeth."
+      ],
+      "internal": [
+        "You realize too late that you’ve been hoping the whole time.",
+        "It’s not fear exactly. It’s recognition.",
+        "You tell yourself it doesn’t matter, and that’s how you know it does."
+      ],
+      "any": []
+    }
+  }  

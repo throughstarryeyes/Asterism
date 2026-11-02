@@ -1,0 +1,60 @@
+{
+    "meta": {
+      "version": 1,
+      "default_type": "warmup"
+    },
+    "exercises": {
+      "warmup": [
+        {
+          "name": "Five Sentences",
+          "instruction": "Write exactly five sentences. Stop, even if you want to keep going.",
+          "constraint": "No backstory.",
+          "duration": "5 minutes"
+        },
+        {
+          "name": "First Thought",
+          "instruction": "Write the first thing that comes to mind without stopping.",
+          "constraint": "Do not edit or reread.",
+          "duration": "3 minutes"
+        }
+      ],
+      "character": [
+        {
+          "name": "What They Avoid",
+          "instruction": "Write a paragraph about something your character refuses to talk about.",
+          "constraint": "Never name the thing directly."
+        },
+        {
+          "name": "Habit Inventory",
+          "instruction": "List five habits your character has when they’re alone.",
+          "constraint": "At least two should contradict each other."
+        }
+      ],
+      "scene": [
+        {
+          "name": "Late Arrival",
+          "instruction": "Write a scene that starts after the important moment already happened.",
+          "constraint": "No flashbacks."
+        },
+        {
+          "name": "One Location",
+          "instruction": "Write a scene that never leaves a single physical space.",
+          "constraint": "Time must still pass."
+        }
+      ],
+      "voice": [
+        {
+          "name": "Second Person Shift",
+          "instruction": "Rewrite a moment in second person.",
+          "constraint": "Keep the emotional distance intimate."
+        }
+      ],
+      "sensory": [
+        {
+          "name": "One Sense",
+          "instruction": "Write using only one sense.",
+          "constraint": "No visual description."
+        }
+      ]
+    }
+  }

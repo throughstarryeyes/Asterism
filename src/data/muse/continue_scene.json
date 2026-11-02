@@ -1,0 +1,30 @@
+{
+    "meta": {
+      "version": 1,
+      "default_goal": "filler",
+      "fallback_goal": "bonding"
+    },
+    "goals": {
+      "bonding": [
+        "Let them share a mundane detail and realize it matters.",
+        "Have one character notice they’ve memorized the other’s habits.",
+        "Use silence as a shared language for a few beats."
+      ],
+      "confession": [
+        "Make the confession indirect: a story, a joke, a half-truth that cracks open.",
+        "Have them blurt it during an unrelated moment.",
+        "Let them almost confess, then choose honesty anyway."
+      ],
+      "grief": [
+        "Let grief surface sideways: exhaustion, anger, numbness, then softness.",
+        "Bring in an object that carries memory without explanation.",
+        "Have someone offer help and the other person refuse for complicated reasons."
+      ],
+      "filler": [
+        "Add a small obstacle that slows them down.",
+        "Shift focus to sensory grounding: weather, lighting, textures, sound.",
+        "Let the scene deepen emotionally without advancing plot."
+      ]
+    }
+  }
+  

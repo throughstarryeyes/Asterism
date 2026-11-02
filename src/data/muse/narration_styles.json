@@ -1,0 +1,199 @@
+{
+  "narration_styles": [
+    {
+      "name": "Bad Memory Mode",
+      "description": "The narrator tells the story with exaggerated or incorrect details and admits they may be remembering it wrong.",
+      "tags": ["unreliable", "pov", "comedic"]
+    },
+    {
+      "name": "Multiple Perspectives Mode",
+      "description": "Different characters retell the same event with biased or contradictory versions.",
+      "tags": ["pov", "structural", "nonlinear"]
+    },
+    {
+      "name": "Censored Future Mode",
+      "description": "A future narrator softens or censors details to protect the listener.",
+      "tags": ["pov", "unreliable", "temporal"]
+    },
+    {
+      "name": "Scrambled Timeline Mode",
+      "description": "Events appear out of order with abrupt jumps between past, present, and future.",
+      "tags": ["nonlinear", "temporal", "experimental"]
+    },
+    {
+      "name": "Chaos-Point Opening",
+      "description": "The story begins at the climax and rewinds to explain how everything escalated.",
+      "tags": ["nonlinear", "structural", "dramatic"]
+    },
+    {
+      "name": "Revisionist Mode",
+      "description": "The narrator keeps correcting themselves mid-story as new (or inconvenient) memories surface.",
+      "tags": ["unreliable", "pov"]
+    },
+    {
+      "name": "Object Witness Mode",
+      "description": "An object or place narrates the events from its own limited point of view.",
+      "tags": ["pov", "experimental"]
+    },
+    {
+      "name": "Puzzle Piece Mode",
+      "description": "Several disconnected stories reveal a single connected meaning at the end.",
+      "tags": ["structural", "nonlinear", "experimental"]
+    },
+    {
+      "name": "Frame Narrative Mode",
+      "description": "The story is told through an interview, letter, confession, video log, or another framing context.",
+      "tags": ["framing", "structural", "pov"]
+    },
+    {
+      "name": "Rulebook Mode",
+      "description": "The story unfolds according to a character's personal rulebook, list, manifesto, or philosophy.",
+      "tags": ["structural", "comedic", "experimental"]
+    },
+    {
+      "name": "Altered State Mode",
+      "description": "The narrator is drunk, sick, anxious, high, euphoric, or otherwise unreliable due to their state.",
+      "tags": ["unreliable", "pov", "emotional"]
+    },
+    {
+      "name": "Future Cutaway Mode",
+      "description": "Brief glimpses into the future interrupt the story to show eventual consequences.",
+      "tags": ["temporal", "nonlinear"]
+    },
+    {
+      "name": "Nested Story Mode",
+      "description": "One story lives inside another, with characters telling stories within stories.",
+      "tags": ["structural", "framing", "experimental"]
+    },
+    {
+      "name": "Hidden Structure Mode",
+      "description": "The narrative secretly follows a countdown, pattern, or structural gimmick revealed later.",
+      "tags": ["structural", "experimental"]
+    },
+    {
+      "name": "Adaptive Audience Mode",
+      "description": "The narrator adjusts how the story is told based on who they believe is listening.",
+      "tags": ["pov", "unreliable", "emotional"]
+    },
+    {
+      "name": "Unspoken Feelings Mode",
+      "description": "The narrator refuses to state their true emotions, leaving the reader to infer everything.",
+      "tags": ["emotional", "dramatic"]
+    },
+    {
+      "name": "Parallel Lives Mode",
+      "description": "Two versions of events unfold simultaneously in alternate timelines.",
+      "tags": ["nonlinear", "temporal", "experimental"]
+    },
+    {
+      "name": "Circular Narrative Mode",
+      "description": "The story ends where it begins, revealing a loop or repeated moment.",
+      "tags": ["structural", "nonlinear", "dramatic"]
+    },
+    {
+      "name": "Countdown Mode",
+      "description": "The story slowly counts down to a known event, disaster, or reveal.",
+      "tags": ["structural", "temporal", "dramatic"]
+    },
+    {
+      "name": "Prophecy Misdirection Mode",
+      "description": "The narrator hints at future events but the meaning is misunderstood until the end.",
+      "tags": ["temporal", "dramatic"]
+    },
+    {
+      "name": "Mythologized Memory Mode",
+      "description": "Everyday events are retold as heroic, legendary, or epic tales.",
+      "tags": ["comedic", "pov", "experimental"]
+    },
+    {
+      "name": "Petty Grievance Mode",
+      "description": "The narrator tells the entire story through the lens of a small annoyance blown out of proportion.",
+      "tags": ["comedic", "pov"]
+    },
+    {
+      "name": "Broken Telephone Mode",
+      "description": "The story changes slightly each time it is retold by another character.",
+      "tags": ["pov", "unreliable", "structural"]
+    },
+    {
+      "name": "Documentary Mode",
+      "description": "Characters speak directly to an invisible camera, and the story is framed as a documentary.",
+      "tags": ["framing", "pov", "comedic"]
+    },
+    {
+      "name": "Interview Montage Mode",
+      "description": "Different voices give short interview-style commentary that forms the narrative.",
+      "tags": ["framing", "structural", "pov"]
+    },
+    {
+      "name": "Diary Mode",
+      "description": "The story unfolds as a series of personal journal entries or logs.",
+      "tags": ["framing", "pov"]
+    },
+    {
+      "name": "Unsent Letters Mode",
+      "description": "The narrator tells the story through letters they never sent or never intended to share.",
+      "tags": ["framing", "pov", "emotional"]
+    },
+    {
+      "name": "Miscommunication Mode",
+      "description": "The narrator misunderstands key information, and the entire story hinges on this confusion.",
+      "tags": ["unreliable", "comedic", "dramatic"]
+    },
+    {
+      "name": "Metafiction Mode",
+      "description": "The narrator is aware they are telling a story and comments on the act of storytelling.",
+      "tags": ["metafiction", "experimental", "comedic"]
+    },
+    {
+      "name": "Rumor Mode",
+      "description": "The story is told as gossip that may or may not be true.",
+      "tags": ["unreliable", "pov", "comedic"]
+    },
+    {
+      "name": "Speculation Mode",
+      "description": "The narrator fills gaps by imagining what must have happened, even if they don’t know.",
+      "tags": ["unreliable", "pov", "experimental"]
+    },
+    {
+      "name": "Character Spotlight Mode",
+      "description": "Each scene follows a different character, eventually weaving together as a whole.",
+      "tags": ["structural", "pov"]
+    },
+    {
+      "name": "Flashbulb Memory Mode",
+      "description": "The narrator fixates intensely on one vivid moment that colors the entire story.",
+      "tags": ["emotional", "dramatic", "pov"]
+    },
+    {
+      "name": "Soundtrack Mode",
+      "description": "Each scene is framed around a song, lyric, or musical cue.",
+      "tags": ["structural", "experimental", "emotional"]
+    },
+    {
+      "name": "Running Gag Mode",
+      "description": "A recurring joke or symbol structures the entire narrative.",
+      "tags": ["comedic", "structural"]
+    },
+    {
+      "name": "Imaginary Audience Mode",
+      "description": "The narrator talks as if presenting the story to a crowd that isn’t really there.",
+      "tags": ["pov", "metafiction", "comedic"]
+    },
+    {
+      "name": "Urban Legend Mode",
+      "description": "The story is told with the tone and exaggeration of a rumor passed down for years.",
+      "tags": ["unreliable", "pov", "comedic"]
+    },
+    {
+      "name": "Out-of-Body Mode",
+      "description": "The narrator describes events as if watching themselves from the outside.",
+      "tags": ["pov", "experimental", "emotional"]
+    },
+    {
+      "name": "Moment-to-Moment Mode",
+      "description": "The narration slows time, dwelling intensely on small seconds or decisions.",
+      "tags": ["emotional", "dramatic", "experimental"]
+    }
+  ]
+}

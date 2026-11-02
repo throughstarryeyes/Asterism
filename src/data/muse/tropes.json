@@ -1,0 +1,228 @@
+{
+  "tropes": [
+    { "text": "Loyal henchman more moral than their boss.", "tags": ["loyalty", "morality", "power"] },
+    { "text": "The apology comes too late, and still changes everything.", "tags": ["timing", "stakes"] },
+
+    { "text": "Being the only two people who know how something really happened.", "tags": ["bonding", "secrets", "trust"] },
+    { "text": "Sharing responsibility for something fragile.", "tags": ["bonding", "caretaking", "stakes"] },
+    { "text": "Having to coordinate without time to explain.", "tags": ["bonding", "competence", "stakes"] },
+    { "text": "Learning to read each other under pressure.", "tags": ["bonding", "trust", "stakes"] },
+
+    { "text": "Sharing a space that wasn’t meant to be shared.", "tags": ["bonding", "domestic"] },
+    { "text": "Taking turns keeping watch.", "tags": ["bonding", "trust", "stakes"] },
+    { "text": "Patch-up care done quietly and without comment.", "tags": ["caretaking", "bonding"] },
+    { "text": "Handling each other’s things carefully.", "tags": ["bonding", "trust"] },
+
+    { "text": "Being forced to trust someone with a small, practical vulnerability.", "tags": ["trust", "bonding"] },
+    { "text": "One person knowing exactly when the other needs to leave.", "tags": ["bonding", "trust"] },
+    { "text": "One person covering without being asked.", "tags": ["bonding", "trust"] },
+    { "text": "Trust established through follow-through, not reassurance.", "tags": ["trust", "competence"] },
+
+    { "text": "Long stretches of time together with nothing dramatic happening.", "tags": ["bonding", "routines"] },
+    { "text": "Silence that becomes functional.", "tags": ["bonding", "routines"] },
+    { "text": "Developing routines without naming them.", "tags": ["bonding", "routines"] },
+    { "text": "Knowing how the other takes their coffee before asking.", "tags": ["routines", "domestic", "bonding"] },
+
+    { "text": "Sharing resources when there isn’t enough.", "tags": ["bonding", "stakes"] },
+    { "text": "Negotiating boundaries in real time.", "tags": ["bonding", "boundaries", "trust"] },
+    { "text": "Making compromises that don’t feel like losses.", "tags": ["bonding", "boundaries", "trust"] },
+    { "text": "Learning what not to joke about.", "tags": ["bonding", "boundaries"] },
+
+    { "text": "Being the only person who sees them at their worst.", "tags": ["bonding", "trust"] },
+    { "text": "Being seen without commentary.", "tags": ["bonding", "trust"] },
+    { "text": "Someone staying calm when they expected judgment.", "tags": ["bonding", "trust"] },
+    { "text": "Someone staying when leaving would be easier.", "tags": ["bonding", "loyalty"] },
+
+    { "text": "Working well together before liking each other.", "tags": ["competence", "bonding"] },
+    { "text": "Liking each other before trusting each other.", "tags": ["bonding", "trust"] },
+    { "text": "Trust forming sideways through competence.", "tags": ["trust", "competence"] },
+    { "text": "Respect preceding affection.", "tags": ["bonding", "trust"] },
+
+    { "text": "Having an unspoken agreement not to ask certain questions yet.", "tags": ["bonding", "secrets", "boundaries"] },
+    { "text": "Letting someone believe something incomplete because the truth isn’t ready.", "tags": ["secrets", "stakes"] },
+    { "text": "Knowing when to push and when to drop it.", "tags": ["bonding", "trust", "boundaries"] },
+    { "text": "Protecting each other’s dignity in front of others.", "tags": ["bonding", "loyalty"] },
+
+    { "text": "Being mistaken for closer than they are—and not correcting it.", "tags": ["bonding", "romance"] },
+    { "text": "Realizing they already function like a unit.", "tags": ["bonding"] },
+    { "text": "Choosing each other by default in small decisions.", "tags": ["bonding"] },
+    { "text": "Noticing absence more than presence.", "tags": ["bonding", "falling-in-love"] },
+
+    { "text": "Care that looks logistical instead of emotional.", "tags": ["caretaking", "bonding"] },
+    { "text": "Checking in without making it a conversation.", "tags": ["bonding"] },
+    { "text": "Remembering preferences instead of promises.", "tags": ["bonding", "trust", "routines"] },
+    { "text": "Showing up consistently.", "tags": ["trust", "bonding"] },
+
+    { "text": "Being relied on in a way that feels earned.", "tags": ["trust", "bonding"] },
+    { "text": "Trust built through repetition.", "tags": ["trust"] },
+    { "text": "Closeness that sneaks up on them.", "tags": ["bonding", "falling-in-love"] },
+    { "text": "Connection that forms before either of them names it.", "tags": ["bonding", "falling-in-love"] },
+
+    { "text": "Enemies forced to rely on each other long before they trust each other.", "tags": ["enemies", "trust", "bonding"] },
+    { "text": "Enemies to friends to lovers, with a lot of unfinished business.", "tags": ["enemies", "romance", "falling-in-love"] },
+    { "text": "Friends to enemies to lovers, because timing ruined the first chance.", "tags": ["romance", "timing", "stakes"] },
+    { "text": "Former rivals who fall in love without ever stopping the competition.", "tags": ["rivals", "romance", "falling-in-love"] },
+
+    { "text": "Strangers who meet at the exact wrong moment and never quite let go.", "tags": ["romance", "timing", "stakes"] },
+    { "text": "Strangers to confidants faster than either of them expected.", "tags": ["bonding", "trust", "timing"] },
+    { "text": "Friends who slowly realize everyone already thinks they’re together.", "tags": ["romance", "bonding", "falling-in-love"] },
+    { "text": "Friends who never cross the line until it’s almost too late.", "tags": ["romance", "timing", "stakes"] },
+
+    { "text": "One falls first, the other falls harder.", "tags": ["romance", "falling-in-love"] },
+    { "text": "Both fall quietly and assume they’re alone in it.", "tags": ["romance", "falling-in-love", "secrets"] },
+    { "text": "They fall in love without naming it, and only notice when it’s threatened.", "tags": ["romance", "falling-in-love", "stakes"] },
+    { "text": "They fall in love while pretending not to.", "tags": ["romance", "falling-in-love", "secrets"] },
+
+    { "text": "Forced proximity that turns into chosen closeness.", "tags": ["bonding", "romance", "falling-in-love"] },
+    { "text": "Sharing a space that becomes a refuge.", "tags": ["domestic", "bonding", "trust"] },
+    { "text": "Learning someone’s routines before learning their past.", "tags": ["routines", "bonding", "secrets"] },
+    { "text": "Love built in the margins of something else.", "tags": ["romance", "falling-in-love", "stakes"] },
+
+    { "text": "The person who sees them clearly and likes them anyway.", "tags": ["romance", "trust", "bonding"] },
+    { "text": "The person who believes in them before they believe in themselves.", "tags": ["romance", "trust", "bonding"] },
+    { "text": "Being loved gently after expecting something harsher.", "tags": ["romance", "trust", "bonding"] },
+    { "text": "Being loved in a way that feels unfamiliar but right.", "tags": ["romance", "trust", "bonding"] },
+
+    { "text": "Love that starts as partnership.", "tags": ["romance", "bonding", "competence"] },
+    { "text": "Love that grows out of mutual competence.", "tags": ["romance", "competence", "bonding"] },
+    { "text": "Love that develops through shared work.", "tags": ["romance", "competence", "bonding"] },
+    { "text": "Love that blooms because they trust each other under pressure.", "tags": ["romance", "trust", "stakes"] },
+
+    { "text": "The slow realization that this is what safety feels like.", "tags": ["trust", "bonding", "falling-in-love"] },
+    { "text": "The moment they miss someone before leaving the room.", "tags": ["romance", "falling-in-love"] },
+    { "text": "The moment silence becomes comfortable.", "tags": ["bonding", "routines"] },
+    { "text": "The moment they reach for each other without thinking.", "tags": ["romance", "bonding", "falling-in-love"] },
+
+    { "text": "Accidental dates that stop feeling accidental.", "tags": ["romance", "falling-in-love"] },
+    { "text": "Domestic moments that feel too intimate to ignore.", "tags": ["domestic", "romance", "falling-in-love"] },
+    { "text": "Late-night conversations that change everything.", "tags": ["bonding", "romance", "stakes"] },
+    { "text": "Shared jokes that quietly become sacred.", "tags": ["bonding", "routines", "romance"] },
+
+    { "text": "Love that survives bad timing.", "tags": ["romance", "timing", "stakes"] },
+    { "text": "Love that waits without demanding.", "tags": ["romance", "trust", "timing"] },
+    { "text": "Love that begins after loss.", "tags": ["romance", "stakes"] },
+    { "text": "Love that arrives when neither of them is looking for it.", "tags": ["romance", "falling-in-love"] },
+
+    { "text": "The first touch that feels intentional.", "tags": ["romance", "falling-in-love"] },
+    { "text": "The kiss that confirms something already true.", "tags": ["romance", "falling-in-love"] },
+    { "text": "The confession that comes out wrong but lands anyway.", "tags": ["romance", "stakes", "secrets"] },
+    { "text": "The almost-confession that changes the dynamic forever.", "tags": ["romance", "stakes", "timing"] },
+
+    { "text": "Love that feels like coming home.", "tags": ["romance", "bonding", "domestic"] },
+    { "text": "Love that feels like starting over.", "tags": ["romance", "stakes"] },
+    { "text": "Love that makes the world larger.", "tags": ["romance", "falling-in-love"] },
+    { "text": "Love that makes staying feel possible.", "tags": ["romance", "trust", "bonding"] },
+
+    { "text": "The person who believes in them longer than is reasonable.", "tags": ["loyalty", "bonding", "trust"] },
+    { "text": "The one who leaves first so they don’t have to be left.", "tags": ["timing", "stakes", "betrayal"] },
+    { "text": "The one who stays and pays for it.", "tags": ["loyalty", "stakes"] },
+    { "text": "The protector who becomes the threat.", "tags": ["descent", "power", "morality"] },
+    { "text": "The threat who becomes the safest option.", "tags": ["descent", "trust", "power"] },
+
+    { "text": "Found family built in a situation no one survives clean.", "tags": ["bonding", "stakes", "descent"] },
+    { "text": "Found family that fractures under pressure, but still shows up.", "tags": ["bonding", "stakes", "betrayal"] },
+    { "text": "Chosen family who know the worst and stay anyway.", "tags": ["bonding", "loyalty", "trust"] },
+    { "text": "Family by circumstance who never stop resenting it.", "tags": ["bonding", "stakes"] },
+
+    { "text": "Rivals who respect each other before they like each other.", "tags": ["rivals", "bonding", "trust"] },
+    { "text": "Rivals who fall in love without ever stopping the competition.", "tags": ["rivals", "romance", "falling-in-love"] },
+    { "text": "Rivals who would die for each other and hate that fact.", "tags": ["rivals", "stakes", "bonding"] },
+
+    { "text": "The one who does the dirty work so someone else can stay good.", "tags": ["morality", "power", "stakes"] },
+    { "text": "The one who keeps their hands clean by letting someone else bleed.", "tags": ["morality", "power", "betrayal"] },
+    { "text": "The moral one who enables the immoral one out of love.", "tags": ["morality", "romance", "descent"] },
+
+    { "text": "The redemption arc interrupted by reality.", "tags": ["descent", "stakes", "morality"] },
+    { "text": "The almost-redemption that costs too much to finish.", "tags": ["descent", "stakes", "morality"] },
+    { "text": "The villain who would have been a hero in a kinder story.", "tags": ["descent", "morality", "power"] },
+
+    { "text": "The person who was right but still loses.", "tags": ["stakes", "morality"] },
+    { "text": "The person who was wrong but survives.", "tags": ["stakes", "descent"] },
+    { "text": "The truth-teller no one listens to until it’s too late.", "tags": ["stakes", "secrets", "timing"] },
+
+    { "text": "The secret that keeps people alive and ruins the relationship.", "tags": ["secrets", "stakes", "betrayal"] },
+    { "text": "The lie that protects everyone except the person telling it.", "tags": ["secrets", "stakes", "morality"] },
+    { "text": "The shared secret that turns into leverage.", "tags": ["secrets", "power", "betrayal"] },
+
+    { "text": "Love that develops in a situation where escape isn’t possible.", "tags": ["romance", "stakes", "descent"] },
+    { "text": "Love that survives because it shouldn’t.", "tags": ["romance", "stakes", "morality"] },
+    { "text": "Love that only works under pressure.", "tags": ["romance", "stakes"] },
+
+    { "text": "The quiet betrayal done for practical reasons.", "tags": ["betrayal", "morality", "stakes"] },
+    { "text": "The betrayal that feels merciful at the time.", "tags": ["betrayal", "morality", "stakes"] },
+    { "text": "The betrayal that saves lives and ends relationships.", "tags": ["betrayal", "stakes", "irreversibility"] },
+
+    { "text": "The character who becomes dangerous by being competent.", "tags": ["competence", "descent", "power"] },
+    { "text": "The character who never wanted power but keeps being handed it.", "tags": ["power", "descent", "stakes"] },
+    { "text": "The character who holds the line until it cuts them.", "tags": ["morality", "stakes", "descent"] },
+
+    { "text": "The ending where no one is innocent, but some people are still worth saving.", "tags": ["ending", "morality", "stakes"] },
+    { "text": "The ending where survival counts as a victory.", "tags": ["ending", "stakes"] },
+    { "text": "The ending where choosing each other is the last defiance.", "tags": ["ending", "bonding", "stakes"] },
+
+    { "text": "The rule that exists until it suddenly doesn’t.", "tags": ["systems", "stakes", "power"] },
+    { "text": "The plan that works once and is never safe again.", "tags": ["stakes", "irreversibility"] },
+    { "text": "The thing that was meant to be temporary becoming permanent.", "tags": ["stakes", "irreversibility"] },
+    { "text": "The solution that creates a new problem.", "tags": ["stakes", "systems"] },
+
+    { "text": "Being promoted without being prepared.", "tags": ["power", "stakes"] },
+    { "text": "Power gained by accident.", "tags": ["power", "stakes"] },
+    { "text": "Responsibility assumed without consent.", "tags": ["power", "stakes", "systems"] },
+    { "text": "Authority granted without support.", "tags": ["power", "systems", "stakes"] },
+
+    { "text": "The person who knows too much too early.", "tags": ["secrets", "stakes"] },
+    { "text": "The secret that stops being optional.", "tags": ["secrets", "stakes", "irreversibility"] },
+    { "text": "Information that changes who holds leverage.", "tags": ["secrets", "power"] },
+    { "text": "The truth that arrives without instructions.", "tags": ["secrets", "stakes"] },
+
+    { "text": "Doing the wrong thing for the right reason.", "tags": ["morality", "stakes", "descent"] },
+    { "text": "Doing the right thing at the worst possible time.", "tags": ["morality", "timing", "stakes"] },
+    { "text": "A necessary act that can’t be justified cleanly.", "tags": ["morality", "stakes", "descent"] },
+    { "text": "The choice that solves the problem but costs something irreplaceable.", "tags": ["stakes", "irreversibility", "morality"] },
+
+    { "text": "Survival requiring repetition.", "tags": ["stakes", "descent"] },
+    { "text": "A boundary crossed once and never uncrossed.", "tags": ["irreversibility", "descent"] },
+    { "text": "The first compromise that makes the second easier.", "tags": ["descent", "morality"] },
+    { "text": "The line that moves quietly.", "tags": ["descent", "irreversibility"] },
+
+    { "text": "Being blamed for the outcome instead of the cause.", "tags": ["stakes", "systems"] },
+    { "text": "Taking credit to control the damage.", "tags": ["power", "stakes", "morality"] },
+    { "text": "Being held responsible for something inherited.", "tags": ["systems", "stakes"] },
+    { "text": "Consequences without intent.", "tags": ["stakes", "systems"] },
+
+    { "text": "Competence mistaken for willingness.", "tags": ["competence", "systems", "stakes"] },
+    { "text": "Reliability mistaken for consent.", "tags": ["systems", "stakes", "morality"] },
+    { "text": "Strength mistaken for capacity.", "tags": ["stakes", "systems"] },
+    { "text": "Silence mistaken for agreement.", "tags": ["systems", "power", "stakes"] },
+
+    { "text": "The system working exactly as designed.", "tags": ["systems", "power", "stakes"] },
+    { "text": "Protection that only works for some people.", "tags": ["systems", "power", "morality"] },
+    { "text": "Rules enforced selectively.", "tags": ["systems", "power"] },
+    { "text": "Punishment replacing prevention.", "tags": ["systems", "stakes", "morality"] },
+
+    { "text": "The warning that’s ignored because it’s inconvenient.", "tags": ["stakes", "timing"] },
+    { "text": "The expert no one listens to.", "tags": ["stakes", "systems"] },
+    { "text": "The risk everyone sees but no one addresses.", "tags": ["stakes", "systems"] },
+    { "text": "The disaster that wasn’t sudden.", "tags": ["stakes", "systems", "timing"] },
+
+    { "text": "A win that doesn’t feel like one.", "tags": ["stakes", "morality"] },
+    { "text": "Victory that changes the terms of the game.", "tags": ["stakes", "power", "irreversibility"] },
+    { "text": "Success that narrows future options.", "tags": ["stakes", "irreversibility"] },
+    { "text": "Achievement that increases scrutiny.", "tags": ["stakes", "power"] },
+
+    { "text": "The past resurfacing at the worst moment.", "tags": ["stakes", "timing"] },
+    { "text": "A debt that comes due unexpectedly.", "tags": ["stakes", "timing"] },
+    { "text": "A favor that turns into obligation.", "tags": ["stakes", "power"] },
+    { "text": "Help that arrives with conditions.", "tags": ["stakes", "power"] },
+
+    { "text": "The role that outlives its usefulness.", "tags": ["systems", "stakes"] },
+    { "text": "Outgrowing the thing that saved them.", "tags": ["stakes", "descent"] },
+    { "text": "Being shaped by a situation that’s already over.", "tags": ["stakes", "descent"] },
+    { "text": "Carrying consequences longer than the cause existed.", "tags": ["stakes", "systems", "timing"] },
+
+    { "text": "The ending that looks like stability.", "tags": ["ending", "stakes"] },
+    { "text": "The quiet failure no one notices.", "tags": ["ending", "stakes"] },
+    { "text": "The decision that feels small at the time.", "tags": ["stakes", "irreversibility"] },
+    { "text": "The moment after which things never quite reset.", "tags": ["ending", "irreversibility"] }
+  ]
+}
