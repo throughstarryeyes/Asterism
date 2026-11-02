@@ -1,4 +1,5 @@
 import { LiveBanner } from './components/Common/LiveBanner';
+import { UpdateBanner } from './components/Common/UpdateBanner';
 import React, { useState, useEffect, useRef } from 'react';
 import { AsterismProvider, useAsterism } from './context/AsterismContext';
 import { NavigationBar } from './components/Header/NavigationBar';
@@ -289,6 +290,7 @@ export function App() {
       <AsterismApp />
       <CursorTrail />
       <LiveBanner />
+      <UpdateBanner />
     </AsterismProvider>
   );
 }

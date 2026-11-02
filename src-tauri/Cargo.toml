@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Asterism, a writing app for stories"
 authors = ["Asterism Writing"]
 license = "GPL-3.0-or-later"
-repository = ""
+repository = "https://github.com/throughstarryeyes/Asterism"
 edition = "2024"
 rust-version = "1.90"
 
@@ -31,3 +31,7 @@ tokio = { version = "1.54.1", features = ["rt-multi-thread", "net", "sync", "tim
 tokio-tungstenite = "0.30.0"
 futures-util = "0.3.34"
 rand = "0.10.3"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-process = "2.4.0"
+tauri-plugin-updater = "2.14.1"
