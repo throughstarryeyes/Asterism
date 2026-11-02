@@ -3,11 +3,12 @@ on:
   push:
     tags: ['v*']
 
+permissions:
+  contents: write
+
 jobs:
-  release:
+  desktop:
     runs-on: windows-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,5 +25,47 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Asterism ${{ github.ref_name }}
+          releaseBody: Windows installer and Android APK below. Windows installs update themselves from here.
           releaseDraft: false
           prerelease: false
+
+  android:
+    needs: desktop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+      - run: npm ci
+      - name: Write signing keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/asterism.jks"
+          cat > src-tauri/gen/android/keystore.properties <<EOF
+          storeFile=$RUNNER_TEMP/asterism.jks
+          password=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          EOF
+      - name: Build APK
+        env:
+          NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
+        run: npx tauri android build --apk
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          apk=$(find src-tauri/gen/android/app/build/outputs/apk -name '*-release.apk' | head -n1)
+          cp "$apk" "Asterism_${GITHUB_REF_NAME}_android.apk"
+          gh release upload "$GITHUB_REF_NAME" "Asterism_${GITHUB_REF_NAME}_android.apk" --clobber
