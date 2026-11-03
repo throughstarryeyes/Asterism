@@ -4,8 +4,9 @@
 export const SCENE_BREAK_HTML = '<hr style="border: none; border-top: 1px dashed var(--border-subtle); margin: 32px 0;" /><p style="text-align: center; color: var(--text-muted); font-style: italic; letter-spacing: 0.3em;">* * *</p>';
 
 // what counts as a scene break: a rule, * * *, ---, ###, ___, ~~~ or . . .
-// the ornament under a styled rule (see services/ornaments) counts as part of the break
-export const SCENE_BREAK = /(?:<hr\b[^>]*>|<p\b[^>]*\bdata-separator-mark\b[^>]*>[^<]*<\/p>|<p\b[^>]*>(?:\s*<(?:em|i|strong|b|u|span)\b[^>]*>)*\s*(?:\*\s*\*\s*\*|---|#{1,3}|_{3,}|~{3,}|\.\s*\.\s*\.)\s*(?:<\/(?:em|i|strong|b|u|span)>\s*)*<\/p>|\n\s*(?:\*\s*\*\s*\*|---|#{1,3}|_{3,})\s*\n)/i;
+// the ornament under a styled rule (see services/ornaments) counts as part of the break. it always has a style;
+// a paragraph that only carries data-separator-mark is ordinary text that picked the tag up by mistake
+export const SCENE_BREAK = /(?:<hr\b[^>]*>|<p\b(?=[^>]*\bdata-separator-mark\b)(?=[^>]*\bstyle\s*=)[^>]*>[^<]*<\/p>|<p\b[^>]*>(?:\s*<(?:em|i|strong|b|u|span)\b[^>]*>)*\s*(?:\*\s*\*\s*\*|---|#{1,3}|_{3,}|~{3,}|\.\s*\.\s*\.)\s*(?:<\/(?:em|i|strong|b|u|span)>\s*)*<\/p>|\n\s*(?:\*\s*\*\s*\*|---|#{1,3}|_{3,})\s*\n)/i;
 const BREAK = SCENE_BREAK;
 
 const BLANK = '<p><br></p>';

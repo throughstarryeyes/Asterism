@@ -229,7 +229,8 @@ export function parseHtmlBlocks(html: string): Block[] {
       } else if (tag === 'p' || tag === 'div' || tag === 'pre' || tag === 'center' || tag === 'section' || tag === 'article') {
         begin('p', tag === 'center' ? 'center' : alignOf(attrs));
         // the ornament under a scene break rule is part of that break, which was already added
-        if (/\bdata-separator-mark\b/.test(attrs)) dropBlock = true;
+        // (a paragraph that only carries the tag, with no style, is ordinary text and is kept)
+        if (/\bdata-separator-mark\b/.test(attrs) && /\bstyle\s*=/.test(attrs)) dropBlock = true;
       } else if (BLOCK_TAGS.has(tag)) {
         flush();
       }

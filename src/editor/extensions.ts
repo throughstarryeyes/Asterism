@@ -43,11 +43,19 @@ export const SceneMark = Node.create({
   group: 'block',
   content: 'text*',
   marks: '',
-  priority: 1100,
+  // after paragraph, so a new line made with Enter is a paragraph. the first block that fits is the one the editor makes.
+  priority: 50,
   addAttributes() {
     return { style: { default: null, parseHTML: el => el.getAttribute('style'), renderHTML: a => (a.style ? { style: a.style } : {}) } };
   },
-  parseHTML() { return [{ tag: 'p[data-separator-mark]' }]; },
+  // only the ornament line (styled, right under a rule) is one of these. text that picked up the tag by mistake is a paragraph.
+  parseHTML() {
+    return [{
+      tag: 'p[data-separator-mark]',
+      priority: 60,
+      getAttrs: el => (el instanceof HTMLElement && el.hasAttribute('style') && el.previousElementSibling?.tagName === 'HR' ? null : false),
+    }];
+  },
   renderHTML({ HTMLAttributes }) { return ['p', mergeAttributes({ 'data-separator-mark': '1' }, HTMLAttributes), 0]; },
 });
 
