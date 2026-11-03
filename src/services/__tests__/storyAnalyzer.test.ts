@@ -278,3 +278,18 @@ describe('nicknames entered in the Story Bible', () => {
     expect(find(findings, 'contradiction-eyes-margaret')).toBeDefined();
   });
 });
+
+describe('sentences in text that is not capitalized', () => {
+  it('splits lowercase writing into sentences', async () => {
+    const { splitSentences } = await import('../coach/entities');
+    expect(splitSentences('she walked home. it was late. "are you ok?" he asked. no. she said nothing.')).toEqual([
+      'she walked home.', 'it was late.', '"are you ok?" he asked.', 'no.', 'she said nothing.',
+    ]);
+  });
+  it('keeps an ellipsis or an abbreviation going into a lowercase word', async () => {
+    const { splitSentences } = await import('../coach/entities');
+    expect(splitSentences('she waited... then left. cats, dogs, etc. were everywhere. Dr. voss agreed.')).toEqual([
+      'she waited... then left.', 'cats, dogs, etc. were everywhere.', 'Dr. voss agreed.',
+    ]);
+  });
+});

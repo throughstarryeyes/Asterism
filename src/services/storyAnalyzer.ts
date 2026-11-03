@@ -11,7 +11,7 @@ import type {
 } from '../types';
 import { getEffectiveLexicon } from '../data/defaultStoryLexicon';
 import { SCENE_BREAK } from './openDraft';
-import { buildEntityIndex, type CoachUnit, type EntityIndex, type KnownCharacter } from './coach/entities';
+import { buildEntityIndex, splitSentences, type CoachUnit, type EntityIndex, type KnownCharacter } from './coach/entities';
 import { getDefaultKnowledge, type CoachKnowledge } from './coach/knowledge';
 import { detectOpenLoops } from './openLoops';
 import { timelineFindings } from './timeline';
@@ -53,8 +53,7 @@ const countWords = (text: string): number => text.split(/\s+/).filter(Boolean).l
 // split text into sentences cleanly
 export function extractSentences(text: string): string[] {
   if (!text) return [];
-  const raw = text.split(/(?<=[.!?])\s+(?=[A-Z0-9"“'‘])|\n+/);
-  return raw.map(s => s.trim()).filter(s => s.length > 3);
+  return splitSentences(text).filter(s => s.length > 3);
 }
 
 // common English stopwords to avoid false-positive character names

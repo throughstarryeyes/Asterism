@@ -64,11 +64,26 @@ const PARTICLES = new Set(['van', 'von', 'de', 'da', 'di', 'del', 'la', 'le', 'b
 const ABBREVIATIONS = /\b(Dr|Mr|Mrs|Ms|Mx|St|Sr|Jr|Prof|Capt|Det)\./g;
 const HIDDEN_PERIOD = '\u0001';
 
+// a sentence can start in lowercase (many writers never capitalize), so a stop followed by a space ends a sentence whatever comes next.
+// exceptions where a lowercase word carries on: after an ellipsis, after an abbreviation such as "etc." or "e.g.",
+// and after a closing quote ("are you ok?" he asked)
+const CARRIES_ON = /(?:\.\.\.|…|\b(?:etc|e\.g|i\.e|vs|approx|cf|fig)\.|[.!?,]["”’])$/i;
 export function splitSentences(text: string): string[] {
   // keep "Dr. Voss" together: hide the title's period while splitting.
-  return text
-    .replace(ABBREVIATIONS, `$1${HIDDEN_PERIOD}`)
-    .split(/(?<=[.!?]["”’']?)\s+(?=[A-Z0-9"“‘'])|\n+/)
+  const hidden = text.replace(ABBREVIATIONS, `$1${HIDDEN_PERIOD}`);
+  const pieces: string[] = [];
+  let start = 0;
+  const stop = /[.!?…]+["”’')\]]*(\s+)(?=\S)/g;
+  for (let m = stop.exec(hidden); m; m = stop.exec(hidden)) {
+    const after = m.index + m[0].length;
+    const before = hidden.slice(start, after - m[1].length);
+    if (/[a-z]/.test(hidden[after]) && CARRIES_ON.test(before)) continue;
+    pieces.push(before);
+    start = after;
+  }
+  pieces.push(hidden.slice(start));
+  return pieces
+    .flatMap(piece => piece.split(/\n+/))
     .map(s => s.split(HIDDEN_PERIOD).join('.').trim())
     .filter(s => s.length > 0);
 }
