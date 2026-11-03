@@ -59,9 +59,12 @@ jobs:
           keyAlias=$KEY_ALIAS
           EOF
       - name: Build APK
-        env:
-          NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
-        run: npx tauri android build --apk
+        run: |
+          # the runner sets this in the shell environment, which the ${{ env }} expression can't see
+          export NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          echo "NDK_HOME=$NDK_HOME"
+          ls "$NDK_HOME" | head -n3
+          npx tauri android build --apk
       - name: Upload to release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
