@@ -9,8 +9,6 @@
     "core:default",
     "dialog:default",
     "fs:default",
-    "fs:allow-write-file",
-    "updater:default",
-    "process:allow-restart"
+    "fs:allow-write-file"
   ]
 }
