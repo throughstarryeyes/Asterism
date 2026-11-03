@@ -28,7 +28,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY2MkNBMDNFQjUzRURERUYKUldUdjNUNjFQcUFzOWdGYkY3Ujk4V3BmMGZwQ0RiRUtnZHNkdWorZ205cTlhSE1NamlONG5QUG8K",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDA4MjczNEI1QkU3QjIzMUYKUldRZkkzdSt0VFFuQ01ZN0hYNHh1ZjBGZTJkZ2JCZ0ZTU3FkR043VmhETTNrM0NQak92MEJ0M1gK",
       "endpoints": [
         "https://github.com/throughstarryeyes/Asterism/releases/latest/download/latest.json"
       ],
