@@ -145,15 +145,25 @@ describe('sharing what you made', () => {
     if ('error' in got) return;
     expect(got.kind).toBe('celebration');
     expect(got.item).toEqual({ ...mine, id: 'custom-new' });
-    expect(SHARE_KINDS).not.toContain('bundle');
-    expect(SHARE_KINDS).not.toContain('palette');
+    // everything the writer can make can be shared, bundles and palettes too
+    expect(SHARE_KINDS).toContain('bundle');
+    expect(SHARE_KINDS).toContain('palette');
+  });
+
+  it('shares a palette without the story it belonged to', async () => {
+    const { parseShared, shareFile } = await import('../shareMade');
+    const file = shareFile('palette', { id: 'custom-p', name: 'Dusk', colors: ['#112233', '#445566', '#778899'], notes: '', projectId: 'story-1' } as { id: string; name: string });
+    const got = parseShared(file.text, () => 'custom-new');
+    if ('error' in got) throw new Error(got.error);
+    expect(got.kind).toBe('palette');
+    expect((got.item as { projectId?: string }).projectId).toBeUndefined();
   });
 
   it('refuses anything that is not a cosmetic file', async () => {
     const { parseShared, SHARE_TYPE } = await import('../shareMade');
     expect('error' in parseShared('not json')).toBe(true);
     expect('error' in parseShared('{"hello":1}')).toBe(true);
-    expect('error' in parseShared(JSON.stringify({ type: SHARE_TYPE, kind: 'bundle', item: { id: 'x' } }))).toBe(true);
+    expect('error' in parseShared(JSON.stringify({ type: SHARE_TYPE, kind: 'soundscape', item: { id: 'x' } }))).toBe(true);
     expect('error' in parseShared(JSON.stringify({ type: SHARE_TYPE, kind: 'cover', item: null }))).toBe(true);
     expect('error' in parseShared('x'.repeat(300 * 1024))).toBe(true);
   });

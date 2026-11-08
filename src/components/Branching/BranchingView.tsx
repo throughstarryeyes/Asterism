@@ -71,7 +71,7 @@ export const BranchingView: React.FC = () => {
 
   if (!story) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: 'var(--bg-app)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', backgroundColor: 'var(--bg-app)' }}>
         {header}
         <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
           <div style={{ maxWidth: 460, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
@@ -162,7 +162,7 @@ export const BranchingView: React.FC = () => {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: 'var(--bg-app)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', backgroundColor: 'var(--bg-app)', overflow: 'hidden' }}>
       {header}
       <main style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: narrow ? 'column' : 'row' }}>
         <div style={{ flex: narrow && selected ? '0 0 38%' : 1, minHeight: 0, minWidth: 0, display: 'flex', flexDirection: 'column' }}>

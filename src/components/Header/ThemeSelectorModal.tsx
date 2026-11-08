@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAsterism } from '../../context/AsterismContext';
 import type { ThemeMode, CursorStyle, EditorFont, CustomThemeConfig, KeystrokeSound } from '../../types';
-import { X, Sparkles, Palette, Type, Check, Volume2, Trash2, Pencil, Plus, Waves, CloudRain, Flame, Coffee, VolumeX, ImagePlus, Upload, Wind } from 'lucide-react';
+import { storageService } from '../../services/storage';
+import { parseThemeFile, themeFile } from '../../services/shareTheme';
+import { Download, X, Sparkles, Palette, Type, Check, Volume2, Trash2, Pencil, Plus, Waves, CloudRain, Flame, Coffee, VolumeX, ImagePlus, Upload, Wind } from 'lucide-react';
 import { CUSTOM_THEME_COST, PAPER_STYLES, contrastRatio, deriveThemeVars, newCustomTheme } from '../../services/customTheme';
 import { getAssetUrl, putAsset, newAssetId } from '../../services/assetStore';
 import { prepareImage } from '../../services/imageUpload';
@@ -15,6 +17,7 @@ import { hasBackdrop, previewStyle } from '../../services/backdrops';
 import type { CosmeticItem } from '../../types';
 import { ShopBrowser } from '../Shop/ShopBrowser';
 import { keystrokeOptions } from '../../data/keystrokeSounds';
+import { ownedKeystrokes } from '../../services/shop';
 import { PAGE_LIMITS, PAGE_PRESETS, normalizePage, samePage } from '../../services/pageLayout';
 import { useDialog } from '../Common/useDialog';
 
@@ -63,7 +66,6 @@ const CURSORS: Array<{ id: CursorStyle; name: string; icon: string }> = [
   { id: 'golden_nib', name: 'Calligrapher Nib', icon: '🖋️' },
 ];
 
-const KEYSTROKES = keystrokeOptions() as Array<{ id: KeystrokeSound; label: string; icon: string }>;
 
 const AMBIENT: Array<{ id: 'off' | 'ocean' | 'wind' | 'rain' | 'fire' | 'library'; label: string; icon: React.ReactNode }> = [
   { id: 'off', label: 'Silence', icon: <VolumeX size={15} /> },
@@ -135,7 +137,7 @@ export const ThemeSelectorModal: React.FC<Props> = ({ isOpen, onClose, initialTa
   const {
     userStats, setTheme, setCursor, setFont, setFontSize, setLineHeight, toggleIndentParagraphs, toggleTypewriterMode,
     setKeystrokeSound, setKeystrokeVolume, playKeystroke, setAmbientSound, setAmbientVolume,
-    saveCustomTheme, deleteCustomTheme, applyCustomTheme,
+    saveCustomTheme, importCustomTheme, showToast, deleteCustomTheme, applyCustomTheme,
     uploadFontFile, importCustomFont, deleteCustomFont, setThemeImages, setPageLayout,
     project, setStoryTheme, cosmeticShop,
   } = useAsterism();
@@ -352,6 +354,14 @@ export const ThemeSelectorModal: React.FC<Props> = ({ isOpen, onClose, initialTa
                   </button>
                 )}
               </div>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', padding: '4px 10px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', cursor: 'pointer', marginBottom: 8 }}><Upload size={12} /> Add a theme from a file
+                <input type="file" accept=".json,application/json" hidden onChange={async e => {
+                  const f = e.target.files?.[0]; e.target.value = '';
+                  if (!f) return;
+                  const got = parseThemeFile(await f.text());
+                  if ('error' in got) showToast(got.error, 'info'); else importCustomTheme(got);
+                }} />
+              </label>
               {customThemes.length === 0 && !draft && (
                 <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>None yet. Each one costs {CUSTOM_THEME_COST} Quill Points to create. Editing it afterwards is free.</div>
               )}
@@ -370,6 +380,7 @@ export const ThemeSelectorModal: React.FC<Props> = ({ isOpen, onClose, initialTa
                       </div>
                       <div style={{ display: 'flex', background: 'var(--bg-card)' }}>
                         <button onClick={() => setDraft({ ...t })} title="Edit" style={{ flex: 1, padding: 6, display: 'flex', justifyContent: 'center', color: 'var(--text-secondary)' }}><Pencil size={13} /></button>
+                        <button onClick={() => { const f = themeFile(t); storageService.downloadTextFile(f.fileName, f.text, 'application/json'); }} title="Save as a file to share" aria-label={`Save ${t.name} as a file`} style={{ flex: 1, padding: 6, display: 'flex', justifyContent: 'center', color: 'var(--text-secondary)' }}><Download size={13} /></button>
                         <button onClick={() => deleteCustomTheme(t.id)} title="Delete" style={{ flex: 1, padding: 6, display: 'flex', justifyContent: 'center', color: 'var(--text-secondary)' }}><Trash2 size={13} /></button>
                       </div>
                     </div>
@@ -566,7 +577,7 @@ export const ThemeSelectorModal: React.FC<Props> = ({ isOpen, onClose, initialTa
             <div>
               <div style={sectionLabel}>Keystrokes</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {KEYSTROKES.map(k => (
+                {(keystrokeOptions([], ownedKeystrokes(userStats.unlockedCosmetics, userStats.unlockedBadges), userStats.keystrokeSound) as Array<{ id: KeystrokeSound; label: string; icon: string }>).map(k => (
                   <button key={k.id} onClick={() => { setKeystrokeSound(k.id); playKeystroke('a', k.id); }} style={row(userStats.keystrokeSound === k.id)}>
                     <span>{k.icon}</span><span style={{ flex: 1 }}>{k.label}</span>
                     {userStats.keystrokeSound === k.id && <Check size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />}

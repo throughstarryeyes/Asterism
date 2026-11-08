@@ -369,7 +369,7 @@ export const PromptLabView: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', width: '100%', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', overflow: 'hidden' }}>
       <header style={{ height: '56px', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-paper)', display: 'flex', alignItems: 'center', gap: '14px', padding: '0 20px', flexShrink: 0 }}>
         <button onClick={() => setViewMode('standard')} style={btn}><ArrowLeft size={15} /><span>Back</span></button>
         <h1 style={{ fontSize: '1.05rem', fontWeight: 700, fontFamily: 'var(--font-title)', margin: 0 }}>Prompt Lab</h1>

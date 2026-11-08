@@ -170,3 +170,7 @@ export const CATEGORIES: Array<{ id: CosmeticItem['category']; label: string; bl
   { id: 'cover', label: 'Covers', blurb: 'Covers for your documents on the home page.' },
   { id: 'shelf', label: 'Badge shelf', blurb: 'Where your badges stand. Streaks unlock the rarest styles.' },
 ];
+
+// the built-in key sounds this writer has: free ones, bought ones, earned ones
+export const ownedKeystrokes = (unlocked: string[] = [], badges: string[] = []): string[] =>
+  CATALOG.filter(i => i.category === 'keystroke' && isOwned(i, unlocked, badges)).map(i => i.id.slice('keystroke-'.length));

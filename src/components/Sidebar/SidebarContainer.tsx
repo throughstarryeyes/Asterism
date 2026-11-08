@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAsterism } from '../../context/AsterismContext';
-import type { SidebarTab } from '../../types';
+import type { SidebarTab, DocToolbox } from '../../types';
 import { ChapterList } from './ChapterList';
 import { StoryBiblePanel } from './StoryBiblePanel';
 import { FoundationsDeck } from './FoundationsDeck';
@@ -10,6 +10,7 @@ import { GoalsRewardsPanel } from './GoalsRewardsPanel';
 import { useNarrow } from '../Common/useNarrow';
 import { CommentsDrawer } from '../Comments/CommentsDrawer';
 import { CoachPanel } from '../Coach/CoachPanel';
+import { ScratchpadPanel } from './ScratchpadPanel';
 import { StoryAnalyzerPanel } from '../Analyzer/StoryAnalyzerPanel';
 import { 
   BookOpen, 
@@ -22,16 +23,19 @@ import {
   Brain, 
   MessageSquare,
   Sparkles,
-  Maximize2
+  Maximize2,
+  StickyNote,
+  SlidersHorizontal
 } from 'lucide-react';
 
 export const SidebarContainer: React.FC = () => {
-  const { sidebarTab, setSidebarTab, isSidebarOpen, toggleSidebar, openTool } = useAsterism();
+  const { sidebarTab, setSidebarTab, isSidebarOpen, toggleSidebar, openTool, project, setToolbox } = useAsterism();
   const narrow = useNarrow();
+  const [editing, setEditing] = React.useState(false);
 
   if (!isSidebarOpen) return null;
 
-  const tabs: Array<{ id: SidebarTab; label: string; icon: React.ReactNode }> = [
+  const allTabs: Array<{ id: SidebarTab; label: string; icon: React.ReactNode }> = [
     { id: 'chapters', label: 'Outline', icon: <BookOpen size={15} /> },
     { id: 'bible', label: 'Bible', icon: <Users size={15} /> },
     { id: 'foundations', label: 'Cards', icon: <Compass size={15} /> },
@@ -41,13 +45,18 @@ export const SidebarContainer: React.FC = () => {
     { id: 'analyzer', label: 'Analyzer', icon: <Brain size={15} /> },
     { id: 'comments', label: 'Notes', icon: <MessageSquare size={15} /> },
     { id: 'goals', label: 'Goals', icon: <Trophy size={15} /> },
+    { id: 'scratchpad', label: 'Pads', icon: <StickyNote size={15} /> },
     { id: 'mindmap', label: 'Map', icon: <Network size={15} /> }
   ];
+  // this document's own choice of tools; the tool that is open can never be the one hidden
+  const hidden = project.toolbox?.hiddenTabs ?? [];
+  const tabs = allTabs.filter(t => !hidden.includes(t.id) || t.id === sidebarTab);
+  const toggleTab = (id: SidebarTab) => setToolbox({ hiddenTabs: hidden.includes(id) ? hidden.filter(h => h !== id) : [...hidden, id] });
 
   // on a small window the sidebar slides over the writing instead of squeezing it
   const drawer: React.CSSProperties = narrow
     ? { position: 'fixed', top: '56px', bottom: 0, left: 0, zIndex: 95, width: 'min(350px, 88vw)', boxShadow: 'var(--shadow-xl)' }
-    : { width: '350px', height: 'calc(100vh - 56px)' };
+    : { width: '350px', alignSelf: 'stretch' };
 
   return (
     <>
@@ -70,7 +79,7 @@ export const SidebarContainer: React.FC = () => {
         aria-label="Story tools"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
+          gridTemplateColumns: 'repeat(6, 1fr)',
           borderBottom: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-paper)'
         }}
@@ -109,7 +118,38 @@ export const SidebarContainer: React.FC = () => {
             </button>
           );
         })}
+        <button
+          title="Choose the tools this document shows"
+          aria-label="Choose the tools this document shows"
+          aria-pressed={editing}
+          onClick={() => setEditing(v => !v)}
+          style={{ padding: '8px 2px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', fontSize: '0.68rem', color: editing ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-muted)' }}
+        >
+          <SlidersHorizontal size={15} />
+          <span>Edit</span>
+        </button>
       </div>
+
+      {editing && (
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-card)', fontSize: '0.78rem', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Tools in this document's sidebar</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            {allTabs.map(t => (
+              <label key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                <input type="checkbox" checked={!hidden.includes(t.id)} disabled={t.id === sidebarTab} onChange={() => toggleTab(t.id)} /> {t.label}
+              </label>
+            ))}
+          </div>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            Open with
+            <select value={project.toolbox?.openTab ?? ''} onChange={e => setToolbox({ openTab: (e.target.value || undefined) as DocToolbox['openTab'] })} style={{ padding: '4px 6px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', background: 'var(--bg-input)', color: 'var(--text-main)' }}>
+              <option value="">Whatever was open</option>
+              <option value="closed">Sidebar closed</option>
+              {allTabs.filter(t => t.id !== 'mindmap' && !hidden.includes(t.id)).map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
 
       {/* active panel content */}
       <div role="tabpanel" aria-label={tabs.find(t => t.id === sidebarTab)?.label} style={{ flex: 1, padding: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -121,6 +161,7 @@ export const SidebarContainer: React.FC = () => {
         {sidebarTab === 'coach' && <CoachPanel />}
         {sidebarTab === 'analyzer' && <StoryAnalyzerPanel />}
         {sidebarTab === 'comments' && <CommentsDrawer />}
+        {sidebarTab === 'scratchpad' && <ScratchpadPanel />}
         {sidebarTab === 'goals' && <GoalsRewardsPanel />}
         {sidebarTab === 'mindmap' && (
           <div style={{ textAlign: 'center', padding: '30px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>

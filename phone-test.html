@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Asterism phone test</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: #1b1b1f; color: #ddd; font: 14px system-ui, sans-serif; display: flex; gap: 24px; align-items: flex-start; justify-content: center; padding: 20px; flex-wrap: wrap; }
+  .panel { width: 240px; display: flex; flex-direction: column; gap: 10px; }
+  .panel h1 { font-size: 15px; margin: 0 0 4px; }
+  .panel label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #aaa; }
+  .panel select, .panel button, .panel input { background: #2b2b31; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 7px 8px; font: inherit; }
+  .panel button { cursor: pointer; }
+  .panel p { font-size: 12px; color: #999; margin: 0; line-height: 1.4; }
+  #phone { position: relative; background: #000; border-radius: 34px; padding: 12px; box-shadow: 0 0 0 2px #444, 0 20px 60px #000a; transition: width .2s, height .2s; flex: none; }
+  #screen { position: relative; width: 100%; height: 100%; border-radius: 22px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  #status { flex: none; height: 24px; background: #fbf4ff; color: #222; font-size: 11px; display: flex; justify-content: space-between; align-items: center; padding: 0 14px; }
+  #frameWrap { flex: 1 1 auto; min-height: 0; position: relative; }
+  iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+  #kbd { flex: none; height: 0; overflow: hidden; background: #d4d6db; transition: height .15s; }
+  #kbd.on { height: 38%; }
+  #kbd .keys { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; padding: 8px; }
+  #kbd .keys span { background: #fff; border-radius: 5px; height: 30px; display: flex; align-items: center; justify-content: center; color: #222; font-size: 13px; box-shadow: 0 1px 0 #999; }
+  #nav { flex: none; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 40px; color: #333; }
+  #nav button { background: none; border: 0; font-size: 18px; color: #333; cursor: pointer; padding: 6px 18px; }
+  #nav.gesture { height: 22px; justify-content: center; }
+  #nav.gesture button { display: none; }
+  #nav.gesture #pill { display: block; }
+  #pill { display: none; width: 110px; height: 5px; border-radius: 3px; background: #222; cursor: ns-resize; }
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>Asterism phone test</h1>
+  <label>Device
+    <select id="device">
+      <option value="360x800">Small Android 360 x 800</option>
+      <option value="411x891" selected>Pixel-ish 411 x 891</option>
+      <option value="390x844">iPhone 390 x 844</option>
+      <option value="430x932">Large phone 430 x 932</option>
+      <option value="800x1280">Tablet 800 x 1280</option>
+    </select>
+  </label>
+  <button id="rotate">Rotate</button>
+  <label>UI scale
+    <select id="scale">
+      <option value="auto" selected>Auto (same as the app)</option>
+      <option value="1">100%</option>
+      <option value="0.9">90%</option>
+      <option value="0.8">80%</option>
+    </select>
+  </label>
+  <label>Navigation
+    <select id="navmode"><option value="buttons">3 buttons</option><option value="gesture">Gesture bar</option></select>
+  </label>
+  <button id="kbdToggle">Toggle keyboard</button>
+  <button id="reload">Reload app</button>
+  <p>The keyboard also opens by itself when you tap a text box in the app, and it squeezes the page the way Android does. Back (the &lt; button) uses the same history the app's Android back button uses. On the gesture bar, drag the pill up to go home, or click it to go back.</p>
+  <p>Run <code>npm run dev</code>, then open <code>/phone-test.html</code>.</p>
+</div>
+
+<div id="phone">
+  <div id="screen">
+    <div id="status"><span id="clock">9:41</span><span>5G ▮▮▮ 95%</span></div>
+    <div id="frameWrap"><iframe id="app" title="Asterism"></iframe></div>
+    <div id="kbd"><div class="keys" id="keys"></div></div>
+    <div id="nav">
+      <button id="recent" title="Recents">|||</button>
+      <button id="home" title="Home">&#9711;</button>
+      <button id="back" title="Back">&lt;</button>
+      <div id="pill" title="Drag up: home. Click: back"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const app = $('app'), phone = $('phone'), kbd = $('kbd');
+  let landscape = false;
+  const query = () => { const v = $('scale').value; return v === 'auto' ? '' : '?scale=' + v; };
+
+  function size() {
+    let [w, h] = $('device').value.split('x').map(Number);
+    if (landscape) [w, h] = [h, w];
+    const avail = window.innerHeight - 40;
+    const k = Math.min(1, avail / (h + 24 + 24 + 40));
+    phone.style.width = (w + 24) + 'px';
+    phone.style.height = (h + 24 + 24 + 40) + 'px';
+    phone.style.zoom = k;
+  }
+  function load() { app.src = '/' + query(); }
+  $('device').onchange = size;
+  $('rotate').onclick = () => { landscape = !landscape; size(); };
+  $('scale').onchange = load;
+  $('reload').onclick = load;
+  $('navmode').onchange = e => $('nav').classList.toggle('gesture', e.target.value === 'gesture');
+  $('kbdToggle').onclick = () => kbd.classList.toggle('on');
+
+  const rows = 'qwertyuiopasdfghjklzxcvbnm,. '.split('');
+  $('keys').innerHTML = rows.map(k => '<span>' + k + '</span>').join('');
+
+  $('back').onclick = () => { try { app.contentWindow.history.back(); } catch (e) {} };
+  $('home').onclick = () => { kbd.classList.remove('on'); load(); };
+  $('recent').onclick = () => alert('Recents are not simulated.');
+  $('pill').onclick = () => $('back').click();
+  let startY = null;
+  $('pill').onpointerdown = e => { startY = e.clientY; $('pill').setPointerCapture(e.pointerId); };
+  $('pill').onpointerup = e => { if (startY !== null && startY - e.clientY > 40) $('home').click(); startY = null; };
+
+  app.addEventListener('load', () => {
+    try {
+      const d = app.contentDocument;
+      d.addEventListener('focusin', e => {
+        const t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) kbd.classList.add('on');
+      });
+      d.addEventListener('focusout', () => setTimeout(() => {
+        const a = d.activeElement;
+        if (!(a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable))) kbd.classList.remove('on');
+      }, 100));
+    } catch (e) {}
+  });
+
+  setInterval(() => { const n = new Date(); $('clock').textContent = n.getHours() + ':' + String(n.getMinutes()).padStart(2, '0'); }, 5000);
+  window.addEventListener('resize', size);
+  size(); load();
+</script>
+</body>
+</html>

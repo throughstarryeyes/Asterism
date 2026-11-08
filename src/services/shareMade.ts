@@ -2,17 +2,19 @@ import { MADE, type MadeKind } from './made';
 import { OLD_SHARE_TYPE } from './legacy';
 
 // sharing something the writer made: one small file that anyone can add to their own Asterism.
-// not shared: palettes (they have their own tool) and bundles (they point at looks the other person may not own).
+// a bundle only lists looks by name: the reader wears the ones they have.
 
 export const SHARE_TYPE = 'asterism-cosmetic';
-export const SHARE_KINDS: MadeKind[] = ['loader', 'separator', 'flourish', 'trail', 'chime', 'shape', 'cover', 'celebration', 'pairing', 'texture', 'edge', 'skin', 'shelf'];
+export const SHARE_KINDS: MadeKind[] = ['loader', 'separator', 'flourish', 'trail', 'chime', 'shape', 'cover', 'celebration', 'pairing', 'texture', 'edge', 'skin', 'shelf', 'palette', 'bundle'];
 const MAX_BYTES = 200 * 1024;
 
 export const canShare = (kind: MadeKind) => SHARE_KINDS.includes(kind);
 
 export function shareFile(kind: MadeKind, item: { id: string; name?: string }): { fileName: string; text: string } {
   const name = (item.name ?? 'mine').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'mine';
-  return { fileName: `${name}.${kind}.asterism.json`, text: JSON.stringify({ type: SHARE_TYPE, version: 1, kind, item }, null, 2) };
+  // a palette that belonged to one story points at a document the reader does not have
+  const { projectId: _story, ...shared } = item as { id: string; name?: string; projectId?: string };
+  return { fileName: `${name}.${kind}.asterism.json`, text: JSON.stringify({ type: SHARE_TYPE, version: 1, kind, item: kind === 'palette' ? shared : item }, null, 2) };
 }
 
 export type Shared = { kind: MadeKind; item: { id: string; name?: string } } | { error: string };

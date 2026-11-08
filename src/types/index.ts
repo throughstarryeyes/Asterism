@@ -18,6 +18,7 @@ import type { Palette } from '../services/palettes';
 import type { CoverDesign } from '../services/cover/design';
 import type { BranchingStory } from '../services/branching';
 import type { QuestState } from '../services/quests';
+import type { ProjectPlay, PlayStats } from '../services/play/types';
 import type { CoachKnowledge } from '../services/coach/knowledge';
 import type { PageLayout } from '../services/pageLayout';
 import type { CoachSettings } from '../services/coach/settings';
@@ -83,9 +84,51 @@ export interface CustomFontConfig {
   fileName?: string;
 }
 
+export type NoteShape = 'square' | 'rounded' | 'pill' | 'oval' | 'blob' | 'folded' | 'hexagon' | 'ticket';
+export type NoteBorder = 'none' | 'solid' | 'dashed' | 'dotted' | 'double' | 'stitched' | 'tape' | 'pin';
+
+// how a sticky note looks. every part is optional, so a plain yellow note needs none of it
+export interface NoteStyle {
+  color?: string;
+  shape?: NoteShape;
+  border?: NoteBorder;
+  borderColor?: string;
+  borderWidth?: number;
+  // 0.3 to 1
+  opacity?: number;
+  // a picture behind the text, as a small data URL
+  image?: string;
+}
+
+// a note on the page. today that is a sticky note; pets will be notes too and share everything
+// here: dismissible, shown on one document or everywhere, movable, starting in a corner.
+export interface Scratchpad {
+  id: string;
+  title: string;
+  text: string;
+  updatedAt: string;
+  kind?: 'note' | 'pet';
+  // set while it sits on the page; where it is and how big
+  floating?: boolean;
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+  // where it shows: every document, or only the documents listed
+  everywhere?: boolean;
+  docIds?: string[];
+  style?: NoteStyle;
+}
+
+export interface DocToolbox {
+  hiddenTabs?: SidebarTab[];
+  // the tool that is open when the document opens; 'closed' keeps the sidebar shut
+  openTab?: SidebarTab | 'closed';
+}
+
 export type ToolKind = 'mindmap' | 'branching' | 'character' | 'scene' | 'cards';
 
-export type AppViewMode = 'home' | 'standard' | 'distraction_free' | 'book_preview' | 'mindmap' | 'tool' | 'prompt_lab' | 'branching' | 'sheet' | 'cards' | 'shop' | 'social' | 'cover';
+export type AppViewMode = 'home' | 'standard' | 'distraction_free' | 'book_preview' | 'mindmap' | 'tool' | 'prompt_lab' | 'branching' | 'sheet' | 'cards' | 'shop' | 'social' | 'cover' | 'play' | 'scratchpads';
 
 export interface CustomSeparator {
   id: string;
@@ -124,7 +167,7 @@ export type EditorScrollMode = 'single' | 'infinite';
 
 export type EditorReviewMode = 'editing' | 'suggesting' | 'commenting';
 
-export type SidebarTab = 'coach' | 'chapters' | 'bible' | 'foundations' | 'prompts' | 'threads' | 'analyzer' | 'mindmap' | 'comments' | 'goals' | 'timeline';
+export type SidebarTab = 'scratchpad' | 'coach' | 'chapters' | 'bible' | 'foundations' | 'prompts' | 'threads' | 'analyzer' | 'mindmap' | 'comments' | 'goals' | 'timeline';
 
 export type KeystrokeSound = 'off' | 'thocky' | 'creamy' | 'clacky' | 'clicky' | 'typewriter' | 'bubbles' | 'duck' | 'droplet' | 'thud' | 'real-typewriter' | `custom-${string}`;
 
@@ -616,8 +659,14 @@ export interface Project {
   kind?: ToolKind;
   // the manuscript (by document id) a tool document is attached to
   attachedTo?: string;
+  // brain-dump notes that belong to this document (see components/Sidebar/ScratchpadPanel)
+  scratchpads?: Scratchpad[];
+  // which sidebar tools this document shows, and which one is open when it is opened
+  toolbox?: DocToolbox;
   // a rolled character or scene
   sheet?: SheetData;
+  // what came out of the Play games for this document (see services/play)
+  play?: ProjectPlay;
   // the writer marked the first draft done; the points are paid only once
   draftComplete?: boolean;
   draftPaid?: boolean;
@@ -737,6 +786,14 @@ export interface UserStats {
   analyzerPreferences?: AnalyzerPreference[];
   // daily and weekly challenges and the streak (see services/quests)
   quests?: QuestState;
+  // every scratchpad. each says which documents it shows on (see services/scratchpads)
+  scratchpads?: Scratchpad[];
+  // highlight colors the writer saved
+  savedHighlights?: string[];
+  // note styles the writer saved to reuse
+  savedNoteStyles?: Array<{ id: string; name: string; style: NoteStyle }>;
+  // solo adventures, custom tables and the daily limit on points for playing (see services/play)
+  play?: PlayStats;
   // chapters already paid for finishing or revising, so changing the status back and forth pays once
   rewarded?: string[];
 }
@@ -749,6 +806,11 @@ export interface HomeSettings {
   // tool cards on home, and buttons in a document's top bar, that the writer turned off (ids from services/layout).
   hiddenCards?: string[];
   hiddenBar?: string[];
+  // the order of the view buttons in the top bar (ids from services/layout)
+  barOrder?: string[];
+  // pieces of the bar along the bottom that the writer turned off, and their order
+  hiddenCapsule?: string[];
+  capsuleOrder?: string[];
   // how the library is ordered ('manual' keeps the saved order)
   sort?: 'manual' | 'edited' | 'newest' | 'oldest' | 'az' | 'za';
 }

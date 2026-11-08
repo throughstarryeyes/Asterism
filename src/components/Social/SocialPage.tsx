@@ -15,7 +15,7 @@ const COMING: Array<{ icon: React.ReactNode; title: string; text: string }> = [
 export const SocialPage: React.FC = () => {
   const { setViewMode } = useAsterism();
   return (
-    <div style={{ height: '100vh', overflowY: 'auto', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)' }}>
+    <div style={{ height: 'var(--app-vh)', overflowY: 'auto', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)' }}>
       <header style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 24px', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-card)', position: 'sticky', top: 0, zIndex: 5 }}>
         <button onClick={() => setViewMode('home')} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.84rem', color: 'var(--text-secondary)', cursor: 'pointer' }}><ArrowLeft size={16} /> Back</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '1.05rem' }}><Users size={18} style={{ color: accent }} /> Social</div>

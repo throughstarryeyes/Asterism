@@ -251,8 +251,8 @@ export const MindMapCanvas: React.FC = () => {
   return (
     <div
       style={{
-        width: '100vw',
-        height: '100vh',
+        width: 'var(--app-vw)',
+        height: 'var(--app-vh)',
         backgroundColor: 'var(--bg-app)',
         display: 'flex',
         flexDirection: 'column',

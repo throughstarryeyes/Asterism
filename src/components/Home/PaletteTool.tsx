@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { DialogFrame } from '../Common/DialogFrame';
 import { useAsterism } from '../../context/AsterismContext';
 import { MAX_COLORS, MIN_COLORS, SCHEMES, STARTER_PALETTES, bestText, cleanPalette, dominantColors, harmony, hexToHsl, newPaletteId, shuffle, themeFromPalette, toCssVars, toHexList, type Palette, type SchemeId } from '../../services/palettes';
-import { Copy, ImagePlus, Lock, Plus, Shuffle, Trash2, Unlock, X } from 'lucide-react';
+import { storageService } from '../../services/storage';
+import { parseShared, shareFile } from '../../services/shareMade';
+import { Copy, Download, ImagePlus, Lock, Upload, Plus, Shuffle, Trash2, Unlock, X } from 'lucide-react';
 
 // a hex box that takes what you type when you leave it, so a half-typed value never changes the color
 const HexBox: React.FC<{ value: string; color: string; label: string; onCommit: (hex: string) => void }> = ({ value, color, label, onCommit }) => {
@@ -29,7 +31,7 @@ const cap: React.CSSProperties = { fontSize: '0.7rem', fontWeight: 700, textTran
 
 // a few colors, to see what goes together. build one from a color, shuffle, pull one from a picture, and keep the ones you like.
 export const PaletteTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { userStats, project, savePalette, deletePalette, saveCustomTheme, showToast } = useAsterism();
+  const { userStats, project, savePalette, deletePalette, saveCustomTheme, importMine, showToast } = useAsterism();
   const [colors, setColors] = useState<string[]>(() => harmony('#c9622b', 'analogous', 5));
   const [kept, setKept] = useState<boolean[]>(() => Array(5).fill(false));
   const [scheme, setScheme] = useState<SchemeId>('analogous');
@@ -85,6 +87,7 @@ export const PaletteTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div style={{ display: 'flex', height: 18, borderRadius: 4, overflow: 'hidden' }}>{p.colors.map((c, i) => <span key={i} style={{ flex: 1, backgroundColor: c }} />)}</div>
         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
       </button>
+      <button onClick={() => { const f = shareFile('palette', p); storageService.downloadTextFile(f.fileName, f.text, 'application/json'); }} aria-label={`Save ${p.name} as a file`} title="Save as a file to share" style={{ display: 'flex', color: 'var(--text-secondary)', cursor: 'pointer' }}><Download size={14} /></button>
       <button onClick={() => deletePalette(p.id)} aria-label={`Delete ${p.name}`} style={{ display: 'flex', color: 'var(--text-secondary)', cursor: 'pointer' }}><Trash2 size={14} /></button>
     </div>
   );
@@ -177,15 +180,25 @@ export const PaletteTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
         </div>
 
-        {saved.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={cap}>Saved palettes</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ ...cap, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>Saved palettes
+              <label style={{ ...chip(false), display: 'inline-flex', alignItems: 'center', gap: 4, textTransform: 'none', letterSpacing: 0 }}><Upload size={12} /> Add a shared file
+                <input type="file" accept=".json,application/json" hidden onChange={async e => {
+                  const f = e.target.files?.[0]; e.target.value = '';
+                  if (!f) return;
+                  const got = parseShared(await f.text());
+                  if ('error' in got) showToast(got.error, 'info');
+                  else if (got.kind !== 'palette') showToast('That file is not a palette.', 'info');
+                  else importMine('palette', got.item);
+                }} />
+              </label>
+            </div>
+            {saved.length === 0 && <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>None kept yet.</div>}
             {forThis.length > 0 && <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>For this story</div>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>{forThis.map(row)}</div>
             {forThis.length > 0 && rest.length > 0 && <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Everything else</div>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>{rest.map(row)}</div>
-          </div>
-        )}
+        </div>
       </div>
     </DialogFrame>
   );

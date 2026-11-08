@@ -44,7 +44,11 @@ import {
   BookOpen,
   ShieldCheck,
   Cloud,
+  Gamepad2,
+  StickyNote,
 } from 'lucide-react';
+import { DocTabs } from '../Common/DocTabs';
+import { ScratchpadPicker } from '../Scratchpads/ScratchpadPicker';
 import { BackupModal } from '../Modals/BackupModal';
 import { SyncModal } from '../Modals/SyncModal';
 import { TourModal } from '../Modals/TourModal';
@@ -85,7 +89,7 @@ export const HomePage: React.FC = () => {
     triggerConfetti,
     liveSessions,
     setIsCollabModalOpen,
-    setHomeSettings
+    setHomeSettings,
   } = useAsterism();
 
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
@@ -93,6 +97,7 @@ export const HomePage: React.FC = () => {
   const [isHomeMenuOpen, setIsHomeMenuOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
   const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+  const [padPickerOpen, setPadPickerOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isDriveOpen, setIsDriveOpen] = useState(false);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
@@ -234,7 +239,7 @@ export const HomePage: React.FC = () => {
   };
 
   const individualTools: Array<{
-    id: SidebarTab | 'editor' | 'sprint' | 'book' | 'mindmap' | 'prompt_lab' | 'branching' | 'shop' | 'palette' | 'social';
+    id: SidebarTab | 'editor' | 'sprint' | 'book' | 'mindmap' | 'prompt_lab' | 'play' | 'branching' | 'shop' | 'palette' | 'social';
     title: string;
     category: string;
     description: string;
@@ -253,6 +258,24 @@ export const HomePage: React.FC = () => {
         icon: <Sparkles size={22} />,
         color: '#ec4899',
         actionStandalone: () => setViewMode('prompt_lab'),
+      },
+      {
+        id: 'scratchpad',
+        title: 'Scratchpad',
+        category: 'Brain Dump',
+        description: 'Sticky notes: start one or find an old one',
+        icon: <StickyNote size={22} />,
+        color: '#eab308',
+        actionStandalone: () => setPadPickerOpen(true),
+      },
+      {
+        id: 'play',
+        title: 'Play',
+        category: 'Games for Writers',
+        description: 'Story games, solo adventures, and games to play together',
+        icon: <Gamepad2 size={22} />,
+        color: '#f97316',
+        actionStandalone: () => setViewMode('play'),
       },
       {
         id: 'prompt_lab',
@@ -408,7 +431,7 @@ export const HomePage: React.FC = () => {
       id="home-scroll-container"
       className="home-page-container"
       style={{
-        height: '100vh',
+        height: 'var(--app-vh)',
         width: '100%',
         backgroundColor: 'var(--bg-app)',
         color: 'var(--text-main)',
@@ -420,6 +443,7 @@ export const HomePage: React.FC = () => {
         position: 'relative'
       }}
     >
+      <DocTabs />
       {/* top sanctuary navigation bar */}
       <header
         className="glass-panel home-header"
@@ -1020,7 +1044,7 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: '20px', alignItems: 'stretch' }}>
+            <div className="doc-grid">
               {filteredProjects.map(proj => (
                 <DocumentCard
                   key={proj.id}
@@ -1781,6 +1805,7 @@ export const HomePage: React.FC = () => {
       <SyncModal isOpen={isDriveOpen} onClose={() => setIsDriveOpen(false)} fromHome />
       <PrivacyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
       <CustomizeModal isOpen={isCustomizeOpen} onClose={() => setIsCustomizeOpen(false)} cards={individualTools.map(t => ({ id: t.title, label: t.title }))} />
+      {padPickerOpen && <ScratchpadPicker onClose={() => setPadPickerOpen(false)} />}
     </div>
   );
 };

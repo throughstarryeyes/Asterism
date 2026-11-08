@@ -1,6 +1,7 @@
 import { sceneCount } from '../../services/openDraft';
 import { ambientLabel } from '../../services/soundscapes';
 import { keystrokeLabel, keystrokeOptions } from '../../data/keystrokeSounds';
+import { ownedKeystrokes } from '../../services/shop';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAsterism } from '../../context/AsterismContext';
 import type { Chapter } from '../../types';
@@ -529,7 +530,7 @@ export const DistractionFreeView: React.FC = () => {
         backgroundColor: 'var(--bg-app)',
         color: 'var(--text-main)',
         width: '100%',
-        height: '100vh',
+        height: 'var(--app-vh)',
         overflowY: 'auto',
         overflowX: 'hidden',
         position: 'relative'
@@ -890,7 +891,7 @@ export const DistractionFreeView: React.FC = () => {
                 </button>
               </div>
 
-              {keystrokeOptions(userStats.customSounds).map(opt => (
+              {keystrokeOptions(userStats.customSounds, ownedKeystrokes(userStats.unlockedCosmetics, userStats.unlockedBadges), userStats.keystrokeSound).map(opt => (
                 <button
                   key={opt.id}
                   onClick={() => {

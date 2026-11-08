@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite",
     "dev:fast": "vite --mode fast",
+    "dev:phone": "vite --open /phone-test.html",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

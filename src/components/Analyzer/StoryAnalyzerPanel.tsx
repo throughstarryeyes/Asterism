@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { PassageLink } from '../Common/PassageLink';
 import { commentTextFor } from '../../services/passageSearch';
 import { useAsterism } from '../../context/AsterismContext';
@@ -7,6 +7,7 @@ import { DEFAULT_STORY_LEXICON } from '../../data/defaultStoryLexicon';
 import { VERDICTS, type FindingFeedback } from '../../services/analyzerFeedback';
 import { FindingAnswer } from './FindingAnswer';
 import { Loader } from '../Common/Loader';
+import { detectCharacters } from '../../services/detectCharacters';
 import { MUSE_FOUNDATION_CARDS } from '../../data/museFoundations';
 import { PreferencesSection, SuggestionBanner } from './AnalyzerPreferences';
 import { 
@@ -224,10 +225,19 @@ export const StoryAnalyzerPanel: React.FC = () => {
     deleteEstablishedFact,
     setStatementIgnored,
     deleteAuthorStyleRule,
-    updateProject
+    updateProject,
+    saveCharacter
   } = useAsterism();
 
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('findings');
+  // people found in the writing that have no card yet
+  const foundCharacters = useMemo(() => detectCharacters(project), [project.chapters, project.storyBible?.characters, project.draftMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  const addFoundCharacter = (c: (typeof foundCharacters)[number]) => saveCharacter({
+    id: `char-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    name: c.name, aliases: c.aliases, role: 'supporting',
+    coreDesire: '', fatalFlaw: '', internalConflict: '', physicalDescription: '', theSecret: '',
+    avatarColor: '#c9933b', relationships: [],
+  });
   const [filterCategory, setFilterCategory] = useState<FindingCategory | 'all'>('all');
 
   // lexicon tab state
@@ -487,6 +497,22 @@ export const StoryAnalyzerPanel: React.FC = () => {
       {/* tab 1: findings */}
       {activeSubTab === 'findings' && (
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {foundCharacters.length > 0 && (
+            <div style={{ border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '8px 10px', background: 'var(--bg-card)' }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>Characters I found ({foundCharacters.length}) - not in your story bible yet</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {foundCharacters.slice(0, 8).map(c => (
+                  <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.8rem', minWidth: 0 }}>
+                      <strong>{c.name}</strong>
+                      <span style={{ color: 'var(--text-muted)' }}> · {c.mentions} mentions in {c.scenes} {c.scenes === 1 ? 'scene' : 'scenes'}</span>
+                    </span>
+                    <button onClick={() => addFoundCharacter(c)} style={{ fontSize: '0.72rem', fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-full)', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', cursor: 'pointer', whiteSpace: 'nowrap' }}>Add card</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {/* category filter pills */}
           <div style={{ display: 'flex', gap: '4px', overflowX: 'auto', paddingBottom: '4px' }}>
             {(['all', 'drafting_note', 'contradiction', 'dropped_thread', 'continuity', 'expansion'] as const).map(cat => (

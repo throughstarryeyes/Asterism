@@ -10,7 +10,7 @@ const pill: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 
 export const CardsView: React.FC = () => {
   const { toolDoc, leaveTool } = useAsterism();
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: 'var(--bg-app)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', backgroundColor: 'var(--bg-app)' }}>
       <header style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', flexWrap: 'wrap', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--toolbar-bg)' }}>
         <button onClick={leaveTool} style={pill}><ArrowLeft size={14} /> <span>Home</span></button>
         <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, fontSize: '1.05rem', fontFamily: 'var(--font-title)', color: 'var(--text-main)' }}>

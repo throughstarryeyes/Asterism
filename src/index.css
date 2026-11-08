@@ -384,6 +384,41 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* small screens: see useAutoScale */
+:root { --app-vh: 100vh; --app-vw: 100vw; }
+html[data-ui-scaled] {
+  --app-vh: calc(100vh / var(--ui-scale));
+  --app-vw: calc(100vw / var(--ui-scale));
+}
+html[data-ui-scaled] #root {
+  transform: scale(var(--ui-scale));
+  transform-origin: 0 0;
+  width: calc(100% / var(--ui-scale));
+  height: calc(100% / var(--ui-scale));
+}
+
+/* phone toolbars scroll sideways rather than wrapping their labels onto two lines */
+@media (max-width: 699px) {
+  header button,
+  .glass-panel button {
+    white-space: nowrap;
+  }
+}
+
+/* document cards sit two across on a phone held upright */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+@media (max-width: 699px) {
+  .doc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
 /* custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
@@ -700,7 +735,7 @@ del.asterism-suggestion-del,
   }
 
   .session-capsule {
-    max-width: calc(100vw - 16px);
+    max-width: calc(var(--app-vw) - 16px);
     overflow-x: auto;
     white-space: nowrap;
     gap: 10px !important;
@@ -892,7 +927,7 @@ del.asterism-suggestion-del,
 :root[data-app-bg] #root,
 :root[data-app-bg] .zen-backdrop,
 :root[data-app-bg] .home-page-container,
-:root[data-app-bg] [style*="100vh"][style*="--bg-app"],
+:root[data-app-bg] [style*="--app-vh"][style*="--bg-app"],
 :root[data-app-bg] [style*="background-color: var(--bg-app)"] {
   background-color: transparent !important;
 }
@@ -1286,4 +1321,12 @@ body[data-skin="x"][data-sk-float="1"] header.glass-panel { margin: 8px 12px 0; 
 .capsule-short { display: none; }
 @media (max-width: 599px) {
   .session-capsule .capsule-short { display: inline; }
+}
+
+@media (max-width: 699px) {
+  .doc-grid .doc-card {
+    padding: 12px !important;
+    min-height: 170px !important;
+    gap: 8px !important;
+  }
 }

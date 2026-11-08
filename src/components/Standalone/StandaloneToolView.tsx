@@ -71,8 +71,8 @@ export const StandaloneToolView: React.FC = () => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
-        width: '100vw',
+        height: 'var(--app-vh)',
+        width: 'var(--app-vw)',
         overflow: 'hidden',
         backgroundColor: 'var(--bg-app)'
       }}

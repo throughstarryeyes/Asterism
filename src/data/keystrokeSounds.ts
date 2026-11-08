@@ -17,8 +17,10 @@ export const BUILT_IN_KEYSTROKES: Array<{ id: string; label: string; icon: strin
 const OFF = { id: 'off', label: 'Silent typing', icon: '🔇' };
 
 // built-ins, then the writer's own, then "off" last.
-export function keystrokeOptions(custom: CustomSound[] = []): Array<{ id: string; label: string; icon: string }> {
-  return [...BUILT_IN_KEYSTROKES, ...custom.map(s => ({ id: s.id, label: s.name, icon: s.type === 'sample' ? '🎙️' : '✨' })), OFF];
+// `owned` limits the built-ins to the ones the writer has (free, bought or earned); `keep` is the sound already picked, so it never vanishes from its own menu.
+export function keystrokeOptions(custom: CustomSound[] = [], owned?: string[], keep?: string): Array<{ id: string; label: string; icon: string }> {
+  const builtIns = owned ? BUILT_IN_KEYSTROKES.filter(k => owned.includes(k.id) || k.id === keep) : BUILT_IN_KEYSTROKES;
+  return [...builtIns, ...custom.map(s => ({ id: s.id, label: s.name, icon: s.type === 'sample' ? '🎙️' : '✨' })), OFF];
 }
 
 // a readable name for the sound that is selected (never a raw id like "custom-lq2x…").

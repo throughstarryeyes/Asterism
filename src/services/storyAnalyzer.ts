@@ -130,9 +130,42 @@ export function extractNarrativeUnits(project: ManuscriptSource): NarrativeUnit[
   const units: NarrativeUnit[] = [];
   const isOpenDraft = project.draftMode === 'open_draft' || chapters.length <= 1;
 
-  // chaptered mode: one unit per chapter.
+  // one chapter's html as scenes. the ornament left beside a rule, and any scrap too short to be a scene,
+  // joins the scene before it (or after it, at the start) instead of becoming a scene of its own or vanishing.
+  const scenesOf = (html: string): Array<{ text: string; header: string }> => {
+    const out: Array<{ text: string; header: string; words: number }> = [];
+    let carry = '';
+    (html || '').split(DIVIDER_REGEX).forEach(chunk => {
+      if (!chunk || !chunk.trim()) return;
+      const plain = htmlToPlainText(chunk);
+      const words = countWords(plain);
+      if (words <= 10) {
+        if (out.length) { out[out.length - 1].text += `
+
+${plain}`; out[out.length - 1].words += words; }
+        else carry += `${plain}
+
+`;
+        return;
+      }
+      const header = chunk.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/i);
+      out.push({ text: carry + plain, words: words + countWords(carry), header: header && header[1] ? header[1].replace(/<[^>]+>/g, '').trim() : '' });
+      carry = '';
+    });
+    if (!out.length && carry.trim()) out.push({ text: carry, words: countWords(carry), header: '' });
+    return out;
+  };
+
+  // chaptered mode: one unit per chapter, or one per scene when a chapter is split by dividers.
   if (!isOpenDraft) {
-    chapters.forEach(ch => pushUnit(units, ch.id, ch.title, htmlToPlainText(ch.content), ch));
+    chapters.forEach(ch => {
+      const scenes = scenesOf(ch.content);
+      if (scenes.length <= 1) {
+        pushUnit(units, ch.id, ch.title, htmlToPlainText(ch.content), ch);
+        return;
+      }
+      scenes.forEach((sc, i) => pushUnit(units, `${ch.id}-scene-${i + 1}`, sc.header || `${ch.title}, scene ${i + 1}`, sc.text, ch));
+    });
     return units;
   }
 
@@ -140,13 +173,9 @@ export function extractNarrativeUnits(project: ManuscriptSource): NarrativeUnit[
   // and findings point at the right place.
   let sceneNumber = 0;
   chapters.forEach(ch => {
-    (ch.content || '').split(DIVIDER_REGEX).filter(chunk => chunk && chunk.trim().length > 0).forEach(chunk => {
+    scenesOf(ch.content).forEach(sc => {
       sceneNumber++;
-      const plainText = htmlToPlainText(chunk);
-      if (countWords(plainText) <= 10) return;
-      const header = chunk.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/i);
-      const headerText = header && header[1] ? header[1].replace(/<[^>]+>/g, '').trim() : '';
-      pushUnit(units, `scene-unit-${sceneNumber}`, headerText || `Scene ${sceneNumber}`, plainText, ch);
+      pushUnit(units, `scene-unit-${sceneNumber}`, sc.header || `Scene ${sceneNumber}`, sc.text, ch);
     });
   });
   if (units.length > 1) return units;

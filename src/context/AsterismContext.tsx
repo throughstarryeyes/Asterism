@@ -10,6 +10,9 @@ import type {
   EditorScrollMode,
   EditorReviewMode,
   SidebarTab,
+  Scratchpad,
+  NoteStyle,
+  DocToolbox,
   CharacterProfile,
   SecretEntry,
   LocationProfile,
@@ -48,6 +51,7 @@ import { addToTrash, loadTrash, removeFromTrash, saveTrash, type TrashedProject 
 import { storageService, countWordsFromHtml } from '../services/storage';
 import { WELCOME_QP } from '../data/defaultProject';
 import { localAssets } from '../services/sync/localAssets';
+import { cleanNoteStyle } from '../services/scratchpads';
 import { MAX_SCAPES, SCAPE_PREFIX, migrateAmbient, sanitizeSoundscape, scapeAssetIds, scapeProblem, tooLong, validateScapeFile, type CustomSoundscape } from '../services/soundscapes';
 import { MAX_CURSORS, cursorCss, hotspotAt, isCursorId, makeCursorImage, sanitizeCursor, type Hotspot } from '../services/customCursor';
 import { findCursorPreset, presetCursorCss } from '../services/cursors';
@@ -93,6 +97,9 @@ import { withGenreAsTag } from '../services/tags';
 import { tourSeen } from '../services/tour';
 import { getActiveEditor } from '../editor/active';
 import { applyPending } from '../editor/pending';
+import { takePlayAward } from '../services/play/points';
+import { adventureToProject } from '../services/play/adventure';
+import type { Adventure, PlayStats } from '../services/play/types';
 import { insertHtml } from '../editor/commands';
 import { addSprint } from '../services/sprints';
 import { moveScene as moveSceneHtml, removeScene as removeSceneHtml } from '../services/openDraft';
@@ -132,6 +139,19 @@ interface AsterismContextType {
   // navigation & view actions
   setActiveChapterId: (id: string) => void;
   setSidebarTab: (tab: SidebarTab) => void;
+  // scratchpads: one per note, either on the open document or on no document at all
+  saveScratchpad: (pad: Scratchpad) => void;
+  deleteScratchpad: (id: string) => void;
+  // highlight colors the writer keeps
+  saveHighlightColor: (color: string) => void;
+  removeHighlightColor: (color: string) => void;
+  saveNoteStyle: (name: string, style: NoteStyle) => void;
+  removeNoteStyle: (id: string) => void;
+  setToolbox: (patch: Partial<DocToolbox>) => void;
+  // documents open side by side as tabs
+  openTabs: string[];
+  switchTab: (id: string) => void;
+  closeTab: (id: string) => void;
   // a foundations card to show when the cards tab opens (from a suggestion), and the character it is about
   focusedCard: { cardId: string; characterId?: string } | null;
   openFoundationCard: (cardId: string, characterId?: string) => void;
@@ -194,6 +214,12 @@ interface AsterismContextType {
   buyStreakFreeze: () => void;
   // a small award for using a planning tool (limited per day), and it counts toward challenges
   notePlanning: (reason: string) => void;
+  // a small award for finishing a game in Play (limited per day)
+  notePlay: (reason: string) => void;
+  // the solo adventures, custom tables and daily limit kept for Play
+  updatePlay: (change: (play: PlayStats) => PlayStats) => void;
+  // turns a solo adventure into a new document in the library, and opens it
+  startAdventureProject: (adventure: Adventure) => string;
   markDraftComplete: (projectId: string) => void;
   // with a chapter id: at the end of that chapter. without: at the caret, or the end if there is none
   insertSceneBreak: (endOfChapterId?: string) => void;
@@ -358,6 +384,8 @@ interface AsterismContextType {
   setCornerRoundness: (roundness: number) => void;
   saveCustomTheme: (theme: CustomThemeConfig) => boolean;
   deleteCustomTheme: (themeId: string) => void;
+  // a theme from a file: made elsewhere, so it is free
+  importCustomTheme: (theme: CustomThemeConfig) => void;
   applyCustomTheme: (themeId: string | null) => void;
   importCustomFont: (font: CustomFontConfig, activate?: boolean) => void;
   uploadFontFile: (file: File, family?: string, activate?: boolean) => Promise<string | null>;
@@ -441,7 +469,10 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         showRecent: loaded.home?.showRecent ?? false,
         showTools: loaded.home?.showTools ?? true,
         hiddenCards: Array.isArray(loaded.home?.hiddenCards) ? loaded.home.hiddenCards.filter((x: unknown) => typeof x === 'string') : [],
-        hiddenBar: Array.isArray(loaded.home?.hiddenBar) ? loaded.home.hiddenBar.filter((x: unknown) => typeof x === 'string') : []
+        hiddenBar: Array.isArray(loaded.home?.hiddenBar) ? loaded.home.hiddenBar.filter((x: unknown) => typeof x === 'string') : [],
+        barOrder: Array.isArray(loaded.home?.barOrder) ? loaded.home.barOrder.filter((x: unknown) => typeof x === 'string') : [],
+        hiddenCapsule: Array.isArray(loaded.home?.hiddenCapsule) ? loaded.home.hiddenCapsule.filter((x: unknown) => typeof x === 'string') : [],
+        capsuleOrder: Array.isArray(loaded.home?.capsuleOrder) ? loaded.home.capsuleOrder.filter((x: unknown) => typeof x === 'string') : []
       }
     };
   });
@@ -449,6 +480,11 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return project.chapters.length > 0 ? project.chapters[0].id : '';
   });
   const [sidebarTab, setSidebarTab] = useState<SidebarTab>('chapters');
+  // ids of the documents open as tabs, kept between sessions
+  const [openTabs, setOpenTabs] = useState<string[]>(() => {
+    try { const v = JSON.parse(localStorage.getItem('asterism-open-tabs') || '[]'); return Array.isArray(v) ? v.filter((x: unknown) => typeof x === 'string') : []; } catch { return []; }
+  });
+  useEffect(() => { try { localStorage.setItem('asterism-open-tabs', JSON.stringify(openTabs)); } catch { /* storage full or blocked */ } }, [openTabs]);
   const [focusedCard, setFocusedCard] = useState<{ cardId: string; characterId?: string } | null>(null);
   // a small window starts with the writing, not the sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => typeof window === 'undefined' || window.innerWidth >= 900);
@@ -872,6 +908,19 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     noteQuest({ type: 'plan' });
   }, [commitQuests, awardPoints, noteQuest]);
 
+  const notePlay = useCallback((reason: string) => {
+    const t = takePlayAward(userStatsRef.current.play, dayKey());
+    // only the day's count changes here: the adventures and tables beside it belong to updatePlay
+    const count = (p: PlayStats | undefined): PlayStats => ({ ...p, day: t.play.day, awards: t.play.awards });
+    userStatsRef.current = { ...userStatsRef.current, play: count(userStatsRef.current.play) };
+    setUserStats(prev => ({ ...prev, play: count(prev.play) }));
+    if (t.qp) awardPoints(t.qp, reason, true);
+  }, [awardPoints]);
+
+  const updatePlay = useCallback((change: (play: PlayStats) => PlayStats) => {
+    setUserStats(prev => ({ ...prev, play: change(prev.play ?? {}) }));
+  }, []);
+
   // words written count toward challenges; a big jump (a paste or an import) does not
   const wordsSeenRef = useRef<{ id: string; n: number } | null>(null);
   const pendingWordsRef = useRef(0);
@@ -1266,6 +1315,25 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     showToast(`Created document: "${newProj.title}"`, 'success');
     awardPoints(REWARD.newDocument, 'Started a new story journey!');
   }, [showToast, awardPoints, setViewMode]);
+
+  // a solo adventure becomes a document of its own: the premise as the synopsis, the people and place in the story bible, the journal as chapter one
+  const startAdventureProject = useCallback((adventure: Adventure): string => {
+    const parts = adventureToProject(adventure);
+    const base = storageService.createNewProject(parts.title, '', parts.tags, parts.synopsis);
+    const chapters = base.chapters.map((c, i) => (i === 0 ? { ...c, title: parts.chapterTitle, content: parts.chapterHtml } : c));
+    const newProj: Project = { ...base, storyBible: parts.storyBible, chapters };
+    storageService.saveProject(newProj);
+    setProject(newProj);
+    setActiveChapterId(chapters[0]?.id || '');
+    setAllProjects(prev => {
+      const updated = [newProj, ...prev.filter(p => p.id !== newProj.id)];
+      storageService.saveProjectsList(updated);
+      return updated;
+    });
+    setViewMode('standard');
+    showToast(`Saved as a document: "${newProj.title}"`, 'success');
+    return newProj.id;
+  }, [showToast]);
 
   // a full copy to try a different version of the story, linked to the original
   const makeAlternateDraft = useCallback((projectId: string) => {
@@ -2843,6 +2911,11 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setUserStats(prev => ({ ...prev, cornerRoundness: roundness }));
   }, []);
 
+  const importCustomTheme = useCallback((theme: CustomThemeConfig) => {
+    setUserStats(prev => ({ ...prev, customThemes: [...(prev.customThemes || []), theme], extrasStamps: stamped(prev.extrasStamps, themeKey(theme.id)) }));
+    showToast(`Added the theme "${theme.name}". Find it under Your themes.`, 'success');
+  }, [showToast]);
+
   const saveCustomTheme = useCallback((theme: CustomThemeConfig): boolean => {
     const isNew = !(userStats.customThemes || []).some(t => t.id === theme.id);
     if (isNew && userStats.quillPoints < CUSTOM_THEME_COST) {
@@ -3146,6 +3219,93 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return () => clearInterval(interval);
   }, [activeSprint?.isActive, completeSprint, project.chapters]);
 
+  const projectRef = useRef(project);
+  projectRef.current = project;
+
+  const saveScratchpad = useCallback((pad: Scratchpad) => {
+    const stamped = { ...pad, updatedAt: new Date().toISOString() };
+    setUserStats(prev => {
+      const l = prev.scratchpads ?? [];
+      return { ...prev, scratchpads: l.some(p => p.id === pad.id) ? l.map(p => (p.id === pad.id ? stamped : p)) : [...l, stamped] };
+    });
+  }, []);
+
+  const deleteScratchpad = useCallback((id: string) => {
+    setUserStats(prev => ({ ...prev, scratchpads: (prev.scratchpads ?? []).filter(p => p.id !== id) }));
+  }, []);
+
+  // notes used to live inside each document. bring any that are left into the one list, tied to the document they were in.
+  useEffect(() => {
+    const old = project.scratchpads;
+    if (!old?.length) return;
+    setUserStats(prev => {
+      const have = new Set((prev.scratchpads ?? []).map(p => p.id));
+      const moved = old.filter(p => !have.has(p.id)).map(p => ({ ...p, docIds: [project.id] }));
+      return { ...prev, scratchpads: [...(prev.scratchpads ?? []), ...moved] };
+    });
+    updateProjectMeta({ scratchpads: [] });
+  }, [project.id, project.scratchpads, updateProjectMeta]);
+  // notes from before "everywhere" was a setting belonged to no document
+  useEffect(() => {
+    const loose = (userStats.scratchpads ?? []).some(p => p.everywhere === undefined && p.docIds === undefined);
+    if (!loose) return;
+    setUserStats(prev => ({ ...prev, scratchpads: (prev.scratchpads ?? []).map(p => (p.everywhere === undefined && p.docIds === undefined ? { ...p, everywhere: true } : p)) }));
+  }, [userStats.scratchpads]);
+
+  const saveHighlightColor = useCallback((color: string) => {
+    if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+    setUserStats(prev => {
+      const list = (prev.savedHighlights ?? []).filter(c => c.toLowerCase() !== color.toLowerCase());
+      return { ...prev, savedHighlights: [color.toLowerCase(), ...list].slice(0, 24) };
+    });
+  }, []);
+  const removeHighlightColor = useCallback((color: string) => {
+    setUserStats(prev => ({ ...prev, savedHighlights: (prev.savedHighlights ?? []).filter(c => c !== color) }));
+  }, []);
+  const saveNoteStyle = useCallback((name: string, style: NoteStyle) => {
+    setUserStats(prev => ({ ...prev, savedNoteStyles: [...(prev.savedNoteStyles ?? []), { id: `ns-${Date.now().toString(36)}`, name: name.trim().slice(0, 24) || 'My style', style: cleanNoteStyle(style) }].slice(-20) }));
+  }, []);
+  const removeNoteStyle = useCallback((id: string) => {
+    setUserStats(prev => ({ ...prev, savedNoteStyles: (prev.savedNoteStyles ?? []).filter(n => n.id !== id) }));
+  }, []);
+
+  const setToolbox = useCallback((patch: Partial<DocToolbox>) => {
+    updateProjectMeta({ toolbox: { ...projectRef.current.toolbox, ...patch } });
+  }, [updateProjectMeta]);
+
+  // a document opened from home or a tab joins the tab strip
+  useEffect(() => {
+    if (viewMode === 'home') return;
+    const id = viewMode === 'tool' || viewMode === 'mindmap' || viewMode === 'branching' || viewMode === 'sheet' || viewMode === 'cards' ? toolDoc.id : project.id;
+    setOpenTabs(prev => (prev.includes(id) ? prev : [...prev, id]));
+  }, [viewMode, project.id, toolDoc.id]);
+
+  // a document that was deleted no longer holds a tab
+  useEffect(() => {
+    setOpenTabs(prev => (prev.every(id => allProjects.some(p => p.id === id)) ? prev : prev.filter(id => allProjects.some(p => p.id === id))));
+  }, [allProjects]);
+
+  const switchTab = useCallback((id: string) => {
+    const target = allProjects.find(p => p.id === id);
+    if (!target) return;
+    if (target.kind) { openTool(target.kind, id); return; }
+    if (id !== project.id) openProject(id);
+    setViewMode('standard');
+  }, [allProjects, project.id, openProject, openTool]);
+
+  // each document opens on the tool the writer chose for it, or with the sidebar shut
+  const openedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (openedFor.current === project.id) return;
+    openedFor.current = project.id;
+    const want = project.toolbox?.openTab;
+    if (!want) return;
+    if (want === 'closed') setIsSidebarOpen(false);
+    else { setSidebarTab(want); setIsSidebarOpen(true); }
+  }, [project.id, project.toolbox?.openTab]);
+
+  const closeTab = useCallback((id: string) => setOpenTabs(prev => prev.filter(t => t !== id)), []);
+
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen(prev => !prev);
   }, []);
@@ -3157,6 +3317,16 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     activeChapter,
     userStats,
     sidebarTab,
+    saveScratchpad,
+    deleteScratchpad,
+    saveHighlightColor,
+    removeHighlightColor,
+    saveNoteStyle,
+    removeNoteStyle,
+    setToolbox,
+    openTabs,
+    switchTab,
+    closeTab,
     isSidebarOpen,
     viewMode,
     toasts,
@@ -3201,6 +3371,9 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     swapDailyQuest,
     buyStreakFreeze,
     notePlanning,
+    notePlay,
+    updatePlay,
+    startAdventureProject,
     markDraftComplete,
     toolDoc,
     toolParent,
@@ -3361,6 +3534,7 @@ export const AsterismProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setAmbientVolume,
     setCornerRoundness,
     saveCustomTheme,
+    importCustomTheme,
     deleteCustomTheme,
     applyCustomTheme,
     importCustomFont,

@@ -36,7 +36,10 @@ import {
   Replace
 } from 'lucide-react';
 import { CommentsDrawer } from '../Comments/CommentsDrawer';
+import { CAPSULE_ITEMS, inOrder, isShown } from '../../services/layout';
+import { SavedHighlights } from '../Common/SavedHighlights';
 import { keystrokeLabel, keystrokeOptions } from '../../data/keystrokeSounds';
+import { ownedKeystrokes } from '../../services/shop';
 import { withBaselines, wordsAddedThisSession, type Baseline } from '../../services/sessionWords';
 import { quoteCandidates } from '../../services/passageSearch';
 import { ActiveSprintBar } from './ActiveSprintBar';
@@ -464,6 +467,9 @@ export const WritingCanvas: React.FC = () => {
     if (hidden) setIsAudioMenuOpen(false);
     try { localStorage.setItem('asterism_hide_session_bar', hidden ? '1' : '0'); } catch { /* storage unavailable: it just won't be remembered */ }
   };
+  // which pieces of the bar show, and in what order (set in Customize)
+  const capsuleShown = (id: string) => isShown(userStats.home?.hiddenCapsule, id);
+  const capsuleRank = (id: string) => Math.max(0, inOrder(CAPSULE_ITEMS, userStats.home?.capsuleOrder).findIndex(i => i.id === id)) + 1;
   const [timerSeconds, setTimerSeconds] = useState<number>(0);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [isAudioMenuOpen, setIsAudioMenuOpen] = useState(false);
@@ -1786,6 +1792,11 @@ export const WritingCanvas: React.FC = () => {
                     </button>
                   ))}
                 </div>
+                <SavedHighlights current={formatHighlightColor} onPick={applyBubbleHighlightColor} />
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Custom
+                  <input type="color" aria-label="Custom highlight color" value={/^#[0-9a-f]{6}$/i.test(formatHighlightColor) ? formatHighlightColor : '#ffff00'} onChange={e => setFormatHighlightColor(e.target.value)} style={{ width: 28, height: 22, padding: 0, border: '1px solid var(--border-subtle)', borderRadius: 4, background: 'none', cursor: 'pointer' }} />
+                  <button onMouseDown={e => { e.preventDefault(); applyBubbleHighlightColor(formatHighlightColor); }} style={{ fontSize: '0.7rem', padding: '1px 8px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', color: 'var(--text-main)', cursor: 'pointer' }}>Use</button>
+                </label>
               </div>
             )}
           </div>
@@ -2133,7 +2144,7 @@ export const WritingCanvas: React.FC = () => {
             top: '72px',
             right: '24px',
             zIndex: 1800,
-            width: 'min(420px, calc(100vw - 32px))',
+            width: 'min(420px, calc(var(--app-vw) - 32px))',
             padding: '12px',
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-md)',
@@ -2668,213 +2679,223 @@ export const WritingCanvas: React.FC = () => {
           <ChevronDown size={15} />
         </button>
 
-        <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-        {/* timer toggle */}
-        <button
-          onClick={() => setIsTimerRunning(!isTimerRunning)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            color: isTimerRunning ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-            fontSize: '0.82rem',
-            fontWeight: 500,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          <Clock size={15} />
-          <span>{formatTimer(timerSeconds)}</span>
-        </button>
-
-        <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-        {/* live words sprint metric */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-main)' }}>
-          <Sparkles size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />
-          <span className="capsule-label">+{sessionWordsAdded} words this session</span><span className="capsule-short">+{sessionWordsAdded}</span>
-        </div>
-
-        <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-        {/* view mode indicator toggle */}
-        <button
-          onClick={() => setEditorScrollMode(editorScrollMode === 'single' ? 'infinite' : 'single')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            fontSize: '0.8rem',
-            color: 'var(--text-secondary)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          {editorScrollMode === 'infinite' ? <ScrollText size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} /> : <FileText size={14} />}
-          <span className="capsule-label">{editorScrollMode === 'infinite' ? 'Infinite Scroll' : 'Single Chapter'}</span>
-        </button>
-
-        <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-        {/* sensory typing audio & keystroke switcher */}
-        <div style={{ position: 'relative' }}>
-          <button
-            onClick={() => setIsAudioMenuOpen(!isAudioMenuOpen)}
-            title="Active Typing Sound: Mechanical, Typewriter, or Ambient"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '0.82rem',
-              fontWeight: 500,
-              color: (userStats.keystrokeSound !== 'off' || userStats.ambientSound !== 'off') ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <Keyboard size={15} />
-            <span style={{ textTransform: 'capitalize' }}>
-              {userStats.keystrokeSound !== 'off' ? keystrokeLabel(userStats.keystrokeSound, userStats.customSounds) : 'Keys: Off'}
-            </span>
-          </button>
-
-          {isAudioMenuOpen && (
-            <div
-              className="glass-panel animate-fade-in"
+        {capsuleShown('timer') && (
+          <div style={{ order: capsuleRank('timer'), display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '1px solid var(--border-strong)', paddingLeft: '14px' }}>
+            {/* timer toggle */}
+            <button
+              onClick={() => setIsTimerRunning(!isTimerRunning)}
               style={{
-                position: 'absolute',
-                bottom: '150%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '280px',
-                backgroundColor: 'var(--bg-paper)',
-                borderRadius: 'var(--radius-lg)',
-                boxShadow: 'var(--shadow-xl)',
-                border: '1px solid var(--border-subtle)',
-                padding: '12px',
-                zIndex: 500,
-                maxHeight: '420px',
-                overflowY: 'auto'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: isTimerRunning ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
+                fontSize: '0.82rem',
+                fontWeight: 500,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-gold-text, var(--accent-gold))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Mechanical Keystroke Sound
-                </span>
-                <button onClick={() => setIsAudioMenuOpen(false)} style={{ color: 'var(--text-muted)', cursor: 'pointer' }}>
-                  <X size={14} />
-                </button>
-              </div>
+              <Clock size={15} />
+              <span>{formatTimer(timerSeconds)}</span>
+            </button>
+          </div>
+        )}
 
-              {keystrokeOptions(userStats.customSounds).map(opt => (
-                <button
-                  key={opt.id}
-                  onClick={() => {
-                    setKeystrokeSound(opt.id as any);
-                    playKeystroke('a', opt.id as any);
-                  }}
+        {capsuleShown('words') && (
+          <div style={{ order: capsuleRank('words'), display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '1px solid var(--border-strong)', paddingLeft: '14px' }}>
+            {/* live words sprint metric */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-main)' }}>
+              <Sparkles size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />
+              <span className="capsule-label">+{sessionWordsAdded} words this session</span><span className="capsule-short">+{sessionWordsAdded}</span>
+            </div>
+          </div>
+        )}
+
+        {capsuleShown('scroll') && (
+          <div style={{ order: capsuleRank('scroll'), display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '1px solid var(--border-strong)', paddingLeft: '14px' }}>
+            {/* view mode indicator toggle */}
+            <button
+              onClick={() => setEditorScrollMode(editorScrollMode === 'single' ? 'infinite' : 'single')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '0.8rem',
+                color: 'var(--text-secondary)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {editorScrollMode === 'infinite' ? <ScrollText size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} /> : <FileText size={14} />}
+              <span className="capsule-label">{editorScrollMode === 'infinite' ? 'Infinite Scroll' : 'Single Chapter'}</span>
+            </button>
+          </div>
+        )}
+
+        {capsuleShown('sounds') && (
+          <div style={{ order: capsuleRank('sounds'), display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '1px solid var(--border-strong)', paddingLeft: '14px' }}>
+            {/* sensory typing audio & keystroke switcher */}
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setIsAudioMenuOpen(!isAudioMenuOpen)}
+                title="Active Typing Sound: Mechanical, Typewriter, or Ambient"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.82rem',
+                  fontWeight: 500,
+                  color: (userStats.keystrokeSound !== 'off' || userStats.ambientSound !== 'off') ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <Keyboard size={15} />
+                <span style={{ textTransform: 'capitalize' }}>
+                  {userStats.keystrokeSound !== 'off' ? keystrokeLabel(userStats.keystrokeSound, userStats.customSounds) : 'Keys: Off'}
+                </span>
+              </button>
+
+              {isAudioMenuOpen && (
+                <div
+                  className="glass-panel animate-fade-in"
                   style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '6px 8px',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '0.78rem',
-                    color: userStats.keystrokeSound === opt.id ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-main)',
-                    backgroundColor: userStats.keystrokeSound === opt.id ? 'var(--accent-gold-bg)' : 'transparent',
-                    textAlign: 'left',
-                    cursor: 'pointer'
+                    position: 'absolute',
+                    bottom: '150%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '280px',
+                    backgroundColor: 'var(--bg-paper)',
+                    borderRadius: 'var(--radius-lg)',
+                    boxShadow: 'var(--shadow-xl)',
+                    border: '1px solid var(--border-subtle)',
+                    padding: '12px',
+                    zIndex: 500,
+                    maxHeight: '420px',
+                    overflowY: 'auto'
                   }}
                 >
-                  <span>{opt.icon}</span>
-                  <span style={{ fontWeight: userStats.keystrokeSound === opt.id ? 600 : 400, flex: 1 }}>{opt.label}</span>
-                  {userStats.keystrokeSound === opt.id && <Check size={13} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />}
-                </button>
-              ))}
-
-              {userStats.keystrokeSound !== 'off' && (
-                <div style={{ marginTop: '6px', marginBottom: '8px', padding: '0 4px' }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '3px' }}>
-                    Key Volume ({Math.round((userStats.keystrokeVolume ?? 0.45) * 100)}%)
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-gold-text, var(--accent-gold))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Mechanical Keystroke Sound
+                    </span>
+                    <button onClick={() => setIsAudioMenuOpen(false)} style={{ color: 'var(--text-muted)', cursor: 'pointer' }}>
+                      <X size={14} />
+                    </button>
                   </div>
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="1"
-                    step="0.05"
-                    value={userStats.keystrokeVolume ?? 0.45}
-                    onChange={e => setKeystrokeVolume(parseFloat(e.target.value))}
-                    style={{ width: '100%', accentColor: 'var(--accent-gold)' }}
-                  />
+
+                  {keystrokeOptions(userStats.customSounds, ownedKeystrokes(userStats.unlockedCosmetics, userStats.unlockedBadges), userStats.keystrokeSound).map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setKeystrokeSound(opt.id as any);
+                        playKeystroke('a', opt.id as any);
+                      }}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '6px 8px',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: '0.78rem',
+                        color: userStats.keystrokeSound === opt.id ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-main)',
+                        backgroundColor: userStats.keystrokeSound === opt.id ? 'var(--accent-gold-bg)' : 'transparent',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <span>{opt.icon}</span>
+                      <span style={{ fontWeight: userStats.keystrokeSound === opt.id ? 600 : 400, flex: 1 }}>{opt.label}</span>
+                      {userStats.keystrokeSound === opt.id && <Check size={13} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />}
+                    </button>
+                  ))}
+
+                  {userStats.keystrokeSound !== 'off' && (
+                    <div style={{ marginTop: '6px', marginBottom: '8px', padding: '0 4px' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '3px' }}>
+                        Key Volume ({Math.round((userStats.keystrokeVolume ?? 0.45) * 100)}%)
+                      </div>
+                      <input
+                        type="range"
+                        min="0.1"
+                        max="1"
+                        step="0.05"
+                        value={userStats.keystrokeVolume ?? 0.45}
+                        onChange={e => setKeystrokeVolume(parseFloat(e.target.value))}
+                        style={{ width: '100%', accentColor: 'var(--accent-gold)' }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)', margin: '8px 0' }} />
+
+                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent-gold-text, var(--accent-gold))', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Ambient Soundscape
+                  </div>
+
+                  {[
+                    { id: 'off', label: 'Silence', icon: <VolumeX size={13} /> },
+                    { id: 'ocean', label: 'Ocean Waves', icon: <Volume2 size={13} /> },
+                    { id: 'rain', label: 'Rain on Glass', icon: <Volume2 size={13} /> },
+                    { id: 'wind', label: 'Wind Through Trees', icon: <Volume2 size={13} /> },
+                    { id: 'fire', label: 'Actual Crackling Fire', icon: <Volume2 size={13} /> },
+                    { id: 'library', label: 'Silent Library', icon: <Volume2 size={13} /> },
+                    ...(userStats.customSoundscapes || []).map(s => ({ id: s.id, label: s.name, icon: <Volume2 size={13} /> })),
+                  ].map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => setAmbientSound(opt.id as any)}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '5px 8px',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: '0.76rem',
+                        color: userStats.ambientSound === opt.id ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-main)',
+                        backgroundColor: userStats.ambientSound === opt.id ? 'var(--accent-gold-bg)' : 'transparent',
+                        textAlign: 'left',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {opt.icon}
+                      <span style={{ fontWeight: userStats.ambientSound === opt.id ? 600 : 400 }}>{opt.label}</span>
+                    </button>
+                  ))}
                 </div>
               )}
-
-              <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)', margin: '8px 0' }} />
-
-              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent-gold-text, var(--accent-gold))', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Ambient Soundscape
-              </div>
-
-              {[
-                { id: 'off', label: 'Silence', icon: <VolumeX size={13} /> },
-                { id: 'ocean', label: 'Ocean Waves', icon: <Volume2 size={13} /> },
-                { id: 'rain', label: 'Rain on Glass', icon: <Volume2 size={13} /> },
-                { id: 'wind', label: 'Wind Through Trees', icon: <Volume2 size={13} /> },
-                { id: 'fire', label: 'Actual Crackling Fire', icon: <Volume2 size={13} /> },
-                { id: 'library', label: 'Silent Library', icon: <Volume2 size={13} /> },
-                ...(userStats.customSoundscapes || []).map(s => ({ id: s.id, label: s.name, icon: <Volume2 size={13} /> })),
-              ].map(opt => (
-                <button
-                  key={opt.id}
-                  onClick={() => setAmbientSound(opt.id as any)}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '5px 8px',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '0.76rem',
-                    color: userStats.ambientSound === opt.id ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-main)',
-                    backgroundColor: userStats.ambientSound === opt.id ? 'var(--accent-gold-bg)' : 'transparent',
-                    textAlign: 'left',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {opt.icon}
-                  <span style={{ fontWeight: userStats.ambientSound === opt.id ? 600 : 400 }}>{opt.label}</span>
-                </button>
-              ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-        {/* notes / critique drawer trigger */}
-        <button
-          onClick={() => setIsSideCommentsOpen(!isSideCommentsOpen)}
-          title="Toggle inline comments drawer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            color: project.comments.length > 0 ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-            fontSize: '0.82rem',
-            fontWeight: 500,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          <MessageSquare size={14} />
-          <span>{project.comments.length} notes</span>
-        </button>
+        {capsuleShown('notes') && (
+          <div style={{ order: capsuleRank('notes'), display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '1px solid var(--border-strong)', paddingLeft: '14px' }}>
+            {/* notes / critique drawer trigger */}
+            <button
+              onClick={() => setIsSideCommentsOpen(!isSideCommentsOpen)}
+              title="Toggle inline comments drawer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: project.comments.length > 0 ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
+                fontSize: '0.82rem',
+                fontWeight: 500,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <MessageSquare size={14} />
+              <span>{project.comments.length} notes</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* floating side comments drawer */}
@@ -2886,7 +2907,7 @@ export const WritingCanvas: React.FC = () => {
             top: '70px',
             right: '24px',
             width: '320px',
-            height: 'calc(100vh - 120px)',
+            height: 'calc(var(--app-vh) - 120px)',
             borderRadius: 'var(--radius-lg)',
             boxShadow: 'var(--shadow-xl)',
             backgroundColor: 'var(--bg-paper)',

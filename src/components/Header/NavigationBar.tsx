@@ -32,7 +32,7 @@ import {
   History,
   RefreshCw,
   GitBranch,
-  ShoppingBag, Wind, Save, SlidersHorizontal, ShieldCheck, Compass } from 'lucide-react';
+  ShoppingBag, Wind, Save, SlidersHorizontal, ShieldCheck, Compass, Gamepad2 } from 'lucide-react';
 import type { KeystrokeSound } from '../../types';
 import { ThemeSelectorModal } from './ThemeSelectorModal';
 import { ExportModal } from '../Modals/ExportModal';
@@ -41,7 +41,7 @@ import { BackupModal } from '../Modals/BackupModal';
 import { TourModal } from '../Modals/TourModal';
 import { PrivacyModal } from '../Modals/PrivacyModal';
 import { CustomizeModal } from '../Modals/CustomizeModal';
-import { isShown } from '../../services/layout';
+import { BAR_VIEWS, inOrder, isShown } from '../../services/layout';
 import { CollaborationModal } from '../Modals/CollaborationModal';
 import { DocumentDetailsModal } from '../Modals/DocumentDetailsModal';
 import { VersionHistoryModal } from '../Modals/VersionHistoryModal';
@@ -104,6 +104,15 @@ export const NavigationBar: React.FC = () => {
     { id: 'library', label: 'Library Drone', icon: <Coffee size={15} /> },
   ] as const;
 
+  const views: Record<string, { icon: React.ReactNode; title: string; on: boolean; run: () => void; narrow?: boolean }> = {
+    editor: { icon: <PenTool size={13} />, title: 'Standard Word Processor Canvas', on: viewMode === 'standard', run: () => setViewMode('standard') },
+    zen: { icon: <Maximize2 size={13} />, title: 'Distraction-Free Zen Mode (Esc to return)', on: viewMode === 'distraction_free', run: () => setViewMode('distraction_free') },
+    book: { icon: <BookOpen size={13} />, title: 'Typeset Book Preview', on: viewMode === 'book_preview', run: () => setViewMode(viewMode === 'book_preview' ? 'standard' : 'book_preview') },
+    map: { icon: <Network size={13} />, title: 'Story 2D Mind Map & Character Web', on: viewMode === 'mindmap', run: () => (viewMode === 'mindmap' ? setViewMode('standard') : openTool('mindmap')), narrow: true },
+    prompts: { icon: <Sparkles size={13} />, title: 'Calliope’s Prompt Lab (Browse prompts, draft sparks, or roll random situations)', on: viewMode === 'prompt_lab', run: () => setViewMode(viewMode === 'prompt_lab' ? 'standard' : 'prompt_lab'), narrow: true },
+    play: { icon: <Gamepad2 size={13} />, title: 'Play (Story games, character scenarios, solo adventures, and games to play with others)', on: viewMode === 'play', run: () => setViewMode(viewMode === 'play' ? 'standard' : 'play'), narrow: true },
+  };
+
   return (
     <>
       <header
@@ -164,7 +173,7 @@ export const NavigationBar: React.FC = () => {
           </button>
 
           {/* brand & project title (click to edit document metadata) */}
-          <button
+          {show('title') && <button
             className="nav-hide-sm"
             onClick={() => setIsDocDetailsModalOpen(true)}
             title={`Document: "${project.title}" — Click to edit title, author, genre & premise`}
@@ -200,10 +209,10 @@ export const NavigationBar: React.FC = () => {
               {project.title}
             </span>
             <Edit3 size={12} style={{ color: 'var(--text-muted)', opacity: 0.7 }} />
-          </button>
+          </button>}
 
           {/* autosave status indicator pill */}
-          <button
+          {show('saved') && <button
             onClick={() => setIsVersionHistoryOpen(true)}
             title={lastAutosaveTime ? `Saved at ${lastAutosaveTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. Open version history.` : 'Saved. Open version history.'}
             style={{
@@ -224,7 +233,7 @@ export const NavigationBar: React.FC = () => {
             <Check size={12} strokeWidth={2.5} />
             <span className="nav-btn-text">Saved</span>
             <History size={12} />
-          </button>
+          </button>}
 
           {/* review mode selector (editing, suggesting, commenting) */}
           <div className="nav-hide-md" style={{ position: 'relative' }}>
@@ -402,7 +411,7 @@ export const NavigationBar: React.FC = () => {
         {/* right section: view mode switcher, scroll mode, sounds, points, themes, collab & export */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
 
-          {/* segmented view mode switcher: editor | zen | book | MindMap */}
+          {/* the view buttons: editor, zen and whatever else the writer keeps up here, in the order they chose */}
           <div
             style={{
               display: 'flex',
@@ -413,116 +422,33 @@ export const NavigationBar: React.FC = () => {
               border: '1px solid var(--border-subtle)'
             }}
           >
-            <button
-              onClick={() => setViewMode('standard')}
-              title="Standard Word Processor Canvas"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '5px 8px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.76rem',
-                fontWeight: viewMode === 'standard' ? 600 : 500,
-                color: viewMode === 'standard' ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-                backgroundColor: viewMode === 'standard' ? 'var(--bg-paper)' : 'transparent',
-                cursor: 'pointer'
-              }}
-            >
-              <PenTool size={13} />
-              <span className="nav-btn-text">Editor</span>
-            </button>
-
-            {show('zen') && (
-            <button
-              onClick={() => setViewMode('distraction_free')}
-              title="Distraction-Free Zen Mode (Esc to return)"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '5px 8px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.76rem',
-                fontWeight: viewMode === 'distraction_free' ? 600 : 500,
-                color: viewMode === 'distraction_free' ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-                backgroundColor: viewMode === 'distraction_free' ? 'var(--bg-paper)' : 'transparent',
-                cursor: 'pointer'
-              }}
-            >
-              <Maximize2 size={13} />
-              <span className="nav-btn-text">Zen</span>
-            </button>
-            )}
-
-            {show('book') && (
-            <button
-              onClick={() => setViewMode(viewMode === 'book_preview' ? 'standard' : 'book_preview')}
-              title="Typeset Book Preview"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '5px 8px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.76rem',
-                fontWeight: viewMode === 'book_preview' ? 600 : 500,
-                color: viewMode === 'book_preview' ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-                backgroundColor: viewMode === 'book_preview' ? 'var(--bg-paper)' : 'transparent',
-                cursor: 'pointer'
-              }}
-            >
-              <BookOpen size={13} />
-              <span className="nav-btn-text">Book</span>
-            </button>
-            )}
-
-            {show('map') && (
-            <button
-              className="nav-hide-sm"
-              onClick={() => viewMode === 'mindmap' ? setViewMode('standard') : openTool('mindmap')}
-              title="Story 2D Mind Map & Character Web"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '5px 8px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.76rem',
-                fontWeight: viewMode === 'mindmap' ? 600 : 500,
-                color: viewMode === 'mindmap' ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-                backgroundColor: viewMode === 'mindmap' ? 'var(--bg-paper)' : 'transparent',
-                cursor: 'pointer'
-              }}
-            >
-              <Network size={13} />
-              <span className="nav-btn-text">Map</span>
-            </button>
-            )}
-
-            {/* prompt lab button */}
-            {show('prompts') && (
-            <button
-              className="nav-hide-sm"
-              onClick={() => setViewMode(viewMode === 'prompt_lab' ? 'standard' : 'prompt_lab')}
-              title="Calliope’s Prompt Lab (Browse prompts, draft sparks, or roll random situations)"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '5px 8px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.76rem',
-                fontWeight: viewMode === 'prompt_lab' ? 600 : 500,
-                color: viewMode === 'prompt_lab' ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
-                backgroundColor: viewMode === 'prompt_lab' ? 'var(--bg-paper)' : 'transparent',
-                cursor: 'pointer'
-              }}
-            >
-              <Sparkles size={13} />
-              <span className="nav-btn-text">Prompts</span>
-            </button>
-            )}
+            {inOrder(BAR_VIEWS, userStats.home?.barOrder).filter(v => v.essential || show(v.id)).map(v => {
+              const view = views[v.id];
+              const on = view.on;
+              return (
+                <button
+                  key={v.id}
+                  className={view.narrow ? 'nav-hide-sm' : undefined}
+                  onClick={view.run}
+                  title={view.title}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '5px 8px',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.76rem',
+                    fontWeight: on ? 600 : 500,
+                    color: on ? 'var(--accent-gold-text, var(--accent-gold))' : 'var(--text-secondary)',
+                    backgroundColor: on ? 'var(--bg-paper)' : 'transparent',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {view.icon}
+                  <span className="nav-btn-text">{v.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* quick writing sprint launcher */}
@@ -592,7 +518,7 @@ export const NavigationBar: React.FC = () => {
             )}
 
           {/* theme palette */}
-          <button
+          {show('appearance') && <button
             onClick={() => setIsThemeModalOpen(true)}
             title="Appearance: theme, type, sound"
             style={{
@@ -609,7 +535,7 @@ export const NavigationBar: React.FC = () => {
             }}
           >
             <Palette size={14} style={{ color: 'var(--accent-gold-text, var(--accent-gold))' }} />
-          </button>
+          </button>}
 
           {/* more: collaboration, import, export */}
           <div style={{ position: 'relative' }}>
@@ -635,6 +561,9 @@ export const NavigationBar: React.FC = () => {
                 }}
               >
                 {[
+                  { label: 'Appearance', icon: <Palette size={14} />, run: () => setIsThemeModalOpen(true) },
+                  { label: 'Version history', icon: <History size={14} />, run: () => setIsVersionHistoryOpen(true) },
+                  { label: 'Document details', icon: <Edit3 size={14} />, run: () => setIsDocDetailsModalOpen(true) },
                   { label: 'Branching story', icon: <GitBranch size={14} />, run: () => openTool('branching') },
                   { label: 'New document', icon: <Plus size={14} />, run: () => createNewProject() },
                   { label: editorScrollMode === 'infinite' ? 'Show one chapter at a time' : 'Scroll all chapters', icon: <ScrollText size={14} />, run: () => setEditorScrollMode(editorScrollMode === 'single' ? 'infinite' : 'single') },

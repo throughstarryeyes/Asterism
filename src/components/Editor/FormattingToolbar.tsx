@@ -29,6 +29,7 @@ import { BUILT_IN_FONTS, FONT_EXTENSIONS } from '../../services/fontFiles';
 import { SYSTEM_FONTS } from '../../services/systemFonts';
 import { TEXT_SIZES, clampSize, parseSize, stepSize } from '../../services/textSize';
 import { useActiveEditor } from '../../editor/active';
+import { SavedHighlights } from '../Common/SavedHighlights';
 import { formatState, run as runEditorCommand, setFont as setEditorFont, setHighlight as setEditorHighlight, setSize as setEditorSize, setTextColor as setEditorTextColor, sizeAt } from '../../editor/commands';
 
 const editorRootOf = (node: Node | null): HTMLElement | null => {
@@ -685,6 +686,8 @@ export const FormattingToolbar: React.FC = () => {
                   />
                 ))}
               </div>
+
+              <SavedHighlights current={activeHighlightColor} onPick={applyHighlightColor} />
 
               {/* custom highlight input */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '4px', borderTop: '1px solid var(--border-subtle)' }}>

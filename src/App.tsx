@@ -1,6 +1,6 @@
 import { LiveBanner } from './components/Common/LiveBanner';
 import { UpdateBanner } from './components/Common/UpdateBanner';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AsterismProvider, useAsterism } from './context/AsterismContext';
 import { NavigationBar } from './components/Header/NavigationBar';
 import { FormattingToolbar } from './components/Editor/FormattingToolbar';
@@ -11,6 +11,7 @@ import { CoverView } from './components/Cover/CoverView';
 import { MindMapCanvas } from './components/MindMap/MindMapCanvas';
 import { BranchingView } from './components/Branching/BranchingView';
 import { PromptLabView } from './components/Prompts/PromptLabView';
+import { PlayView } from './components/Play/PlayView';
 import { ShopPage } from './components/Shop/ShopPage';
 import { SocialPage } from './components/Social/SocialPage';
 import { CursorTrail } from './components/Common/CursorTrail';
@@ -21,33 +22,18 @@ import { StandaloneToolView } from './components/Standalone/StandaloneToolView';
 import { SidebarContainer } from './components/Sidebar/SidebarContainer';
 import { ToastNotification } from './components/Common/ToastNotification';
 import { FileUp, Sparkles } from 'lucide-react';
-import { inDesktopApp } from './services/saveFile';
+import { ScratchpadsPage } from './components/Scratchpads/ScratchpadsPage';
+import { DocTabs } from './components/Common/DocTabs';
+import { FloatingScratchpads } from './components/Common/FloatingScratchpads';
+import { useBackNavigation } from './components/Common/useBackNavigation';
+import { useAutoScale } from './components/Common/useAutoScale';
 
 const AsterismApp: React.FC = () => {
   const { viewMode, setViewMode, setSidebarTab, importManuscriptFile, project } = useAsterism();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  useAutoScale();
 
-  // Android's back button: close what is open, then step back to the home page, then leave the app
-  const backRef = useRef({ viewMode, setViewMode });
-  backRef.current = { viewMode, setViewMode };
-  useEffect(() => {
-    if (!inDesktopApp() || !/Android/i.test(navigator.userAgent)) return;
-    let stop: (() => void) | undefined;
-    let unmounted = false;
-    void import('@tauri-apps/api/app').then(async ({ onBackButtonPress, exit }) => {
-      const listener = await onBackButtonPress(() => {
-        if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
-          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-        } else if (backRef.current.viewMode !== 'home') {
-          backRef.current.setViewMode('home');
-        } else {
-          void exit(0);
-        }
-      });
-      if (unmounted) void listener.unregister(); else stop = () => void listener.unregister();
-    });
-    return () => { unmounted = true; stop?.(); };
-  }, []);
+  useBackNavigation(viewMode, setViewMode);
 
   useEffect(() => {
     let dragCounter = 0;
@@ -176,10 +162,30 @@ const AsterismApp: React.FC = () => {
     );
   }
 
+  if (viewMode === 'scratchpads') {
+    return (
+      <>
+        <ScratchpadsPage />
+        <ToastNotification />
+        {dragOverlay}
+      </>
+    );
+  }
+
   if (viewMode === 'prompt_lab') {
     return (
       <>
         <PromptLabView />
+        <ToastNotification />
+        {dragOverlay}
+      </>
+    );
+  }
+
+  if (viewMode === 'play') {
+    return (
+      <>
+        <PlayView />
         <ToastNotification />
         {dragOverlay}
       </>
@@ -208,7 +214,7 @@ const AsterismApp: React.FC = () => {
 
   if (viewMode === 'cover') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', width: '100%', overflow: 'hidden' }}>
         <NavigationBar />
         <CoverView />
         <ToastNotification />
@@ -227,7 +233,7 @@ const AsterismApp: React.FC = () => {
 
   if (viewMode === 'book_preview') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', width: '100%', overflow: 'hidden' }}>
         <NavigationBar />
         <BookView />
         <ToastNotification />
@@ -267,10 +273,11 @@ const AsterismApp: React.FC = () => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'var(--app-vh)', width: '100%', overflow: 'hidden' }}>
       <a className="skip-link" href="#writing-area">Skip to writing</a>
       <NavigationBar />
-      <div style={{ display: 'flex', flex: 1, minHeight: 0, height: 'calc(100vh - 56px)', overflow: 'hidden' }}>
+      <DocTabs />
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <SidebarContainer />
         <main id="writing-area" tabIndex={-1} style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0, overflow: 'hidden', outline: 'none' }}>
           <h1 className="sr-only">{project.title}</h1>
@@ -289,6 +296,7 @@ export function App() {
     <AsterismProvider>
       <AsterismApp />
       <CursorTrail />
+      <FloatingScratchpads />
       <LiveBanner />
       <UpdateBanner />
     </AsterismProvider>
